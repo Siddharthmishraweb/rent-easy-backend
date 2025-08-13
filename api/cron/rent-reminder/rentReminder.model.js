@@ -1,4 +1,3 @@
-// models/rentReminder.model.js
 import { mongoose } from "../../helper/index.js"
 
 const rentReminderSchema = new mongoose.Schema(
@@ -13,3 +12,4 @@ const rentReminderSchema = new mongoose.Schema(
 )
 
 export default mongoose.model("RentReminder", rentReminderSchema)
+
