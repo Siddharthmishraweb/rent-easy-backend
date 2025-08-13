@@ -1,0 +1,69 @@
+{
+  "name": "rent-easy-server",
+  "version": "1.0.0",
+  "description": "A rent simplify app",
+  "main": "app.js",
+  "type": "module",
+  "scripts": {
+    "start": "node app.js",
+    "dev": "nodemon app.js",
+    "test": "npm run test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Siddharthmishraweb/rent-easy-backend.git"
+  },
+  "keywords": [
+    "rent",
+    "house",
+    "Here",
+    "are",
+    "relevant",
+    "**keywords**",
+    "for",
+    "your",
+    "**RentEasy**",
+    "project",
+    "—",
+    "useful",
+    "for",
+    "SEO",
+    "resumes",
+    "GitHub",
+    "tags",
+    "LinkedIn",
+    "and",
+    "developer",
+    "portfolios:"
+  ],
+  "author": "Management",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Siddharthmishraweb/rent-easy-backend/issues"
+  },
+  "homepage": "https://github.com/Siddharthmishraweb/rent-easy-backend#readme",
+  "dependencies": {
+    "bcrypt": "^6.0.0",
+    "bcryptjs": "^3.0.2",
+    "bull": "^4.16.5",
+    "cors": "^2.8.5",
+    "dayjs": "^1.11.13",
+    "dotenv": "^17.2.1",
+    "express": "^5.1.0",
+    "express-async-handler": "^1.2.0",
+    "fs-extra": "^11.3.1",
+    "google-auth-library": "^10.2.1",
+    "handlebars": "^4.7.8",
+    "jsonwebtoken": "^9.0.2",
+    "moment": "^2.30.1",
+    "mongoose": "^8.17.0",
+    "morgan": "^1.10.1",
+    "node-cron": "^4.2.1",
+    "nodemailer": "^7.0.5",
+    "nodemon": "^3.1.10",
+    "pdfkit": "^0.17.1",
+    "puppeteer": "^24.16.0",
+    "redis": "^5.8.0",
+    "stream-buffers": "^3.0.3"
+  }
+}
