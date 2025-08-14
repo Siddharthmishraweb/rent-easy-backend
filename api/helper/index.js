@@ -10,7 +10,10 @@ import {
   PDFDocument,
   streamBuffers,
   nodemailer,
-  Queue
+  Queue,
+  Handlebars,
+  dayjs,
+  puppeteer
 } from './lib.js'
 import asyncHandler from 'express-async-handler'
 
@@ -129,5 +132,8 @@ export {
   PDFDocument,
   streamBuffers,
   nodemailer,
-  Queue
+  Queue,
+  Handlebars,
+  dayjs,
+  puppeteer
 }

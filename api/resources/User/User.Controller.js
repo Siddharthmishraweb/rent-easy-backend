@@ -29,15 +29,11 @@ const loginUser = async (req, res) => {
 const resetPassword = async (req, res) => {
   const data = await resetPasswordService(req.body)
   res.status(200).json({ message: USER_MESSAGES.RESET_PASSWORD, data: data })
-
-  // return res.success(data)
 }
 
 const verifyResetToken = async (req, res) => {
   const data = await verifyResetTokenService(req.body)
   res.status(200).json({ message: USER_MESSAGES.VERIFY_RESET_TOKEN, data: data })
-
-  // return res.success(data)
 }
 
 const updatePassword = async (req, res) => {

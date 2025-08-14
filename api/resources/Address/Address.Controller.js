@@ -5,57 +5,60 @@ import {
   deleteAddress as deleteAddressByAddressId,
   updateAddressByAddressId as updateAddressModel
 } from "./Address.Model.js"
+import AppError from "../../helper/AppError.js"
 import { ADDRESS_MESSAGES as MSG } from "./Address.Constant.js"
 
-const createAddress = async (req, res) => {
+const createAddress = async (req, res, next) => {
   try {
     const { addressData } = req.body
     const address = await createAddressModel(addressData)
-    res.status(201).json({ message: MSG.ADDRESS_CREATED, data: address })
+    return res.success(201, MSG.ADDRESS_CREATED, address)
   } catch (err) {
-    res.status(500).json({ error: err.message })
+    next(err)
   }
 }
 
-const updateAddressByAddressId = async (req, res) => {
+const updateAddressByAddressId = async (req, res, next) => {
   try {
     const { addressId, addressData } = req.body
     const address = await updateAddressModel(addressId, addressData)
-    res.status(201).json({ message: MSG.ADDRESS_CREATED, data: address })
+    return res.success(200, MSG.ADDRESS_UPDATED, address)
   } catch (err) {
-    res.status(500).json({ error: err.message })
+     next(err)
   }
 }
 
-const getAddressByUserId = async (req, res) => {
+const getAddressByUserId = async (req, res, next) => {
   try {
     const { userId } = req.body
     const addresses = await getAddressUserId(userId)
-    res.json({ message: MSG.ALL_ADDRESSES, data: addresses })
+    return res.success(200, MSG.ALL_ADDRESSES, addresses)
   } catch (err) {
-    res.status(500).json({ error: err.message })
+     next(err)
   }
 }
 
-const getAddressById = async (req, res) => {
+const getAddressById = async (req, res, next) => {
   try {
     const { addressId } = req.body
     const address = await getAddressByAddressId(addressId)
-    if (!address) return res.status(404).json({ message: MSG.NOT_FOUND })
-    res.json(address)
+    if (!address){
+      throw new AppError(MSG.NOT_FOUND, 404)
+    }
+    return res.success(200, MSG.ADDRESS_FOUND, address)
   } catch (err) {
-    res.status(500).json({ error: err.message })
+    next(err)
   }
 }
 
-const deleteAddress = async (req, res) => {
+const deleteAddress = async (req, res, next) => {
   try {
     const { addressId } = req.body
     const address = await deleteAddressByAddressId(addressId)
-    if (!address) return res.status(404).json({ message: MSG.NOT_FOUND })
-    res.json({ message: MSG.ADDRESS_DELETED })
+    if (!address)  throw new AppError(MSG.NOT_FOUND, 404)
+      return res.success(200, MSG.ADDRESS_DELETED)
   } catch (err) {
-    res.status(500).json({ error: err.message })
+     next(err)
   }
 }
 
