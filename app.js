@@ -20,9 +20,9 @@ app.use(morgan('dev'))
 
 
 // ---------- ROUTES ----------
-app.use('/api', routes)
-
 app.use(responseHandler)
+
+app.use('/api', routes)
 
 app.use(errorHandler)
 

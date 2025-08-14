@@ -12,6 +12,7 @@ import nodemailer from 'nodemailer'
 import Handlebars from 'handlebars'
 import puppeteer from 'puppeteer'
 import Queue from 'bull'
+import dayjs from 'dayjs'
 
 export {
   mongoose,
@@ -27,5 +28,6 @@ export {
   nodemailer,
   Handlebars,
   puppeteer,
-  Queue
+  Queue,
+  dayjs
 }
