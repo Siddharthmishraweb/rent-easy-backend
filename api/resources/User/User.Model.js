@@ -11,7 +11,8 @@ import {
    verifyToken
 } from '../../helper/index.js'
 import AppError from '../../helper/AppError.js'
-import { createAddress, updateAddressByAddressId, deleteAddress } from '../Address/Address.Model.js'
+import AddressModel from '../Address/Address.Model.js'
+// import { createAddress, updateAddressByAddressId, deleteAddress } from '../Address/Address.Model.js'
 import { USER_MESSAGES, MESSAGES } from './User.Constant.js'
 
 const {
@@ -32,7 +33,7 @@ const registerUserService = async ({ name, email, password, phone, role, aadhaar
   let user = null
 
   if (address) {
-    createdAddress = await createAddress(address)
+    createdAddress = await AddressModel.createAddress(address)
   }
 
   try {
@@ -48,15 +49,15 @@ const registerUserService = async ({ name, email, password, phone, role, aadhaar
     })
 
     if (user && createdAddress?._id) {
-      await updateAddressByAddressId(createdAddress._id, { ...address, userId: user._id })
+      await AddressModel.updateAddressByAddressId(createdAddress._id, { ...address, userId: user._id })
     }
 
     const token = await generateToken(user)
-    return { token, user }
+    return { token, user, addressId: createdAddress?._id }
 
   } catch (err) {
     if (!user && createdAddress?._id) {
-      await deleteAddress(createdAddress._id)
+      await AddressModel.deleteAddress(createdAddress._id)
     }
     throw new AppError(err.message, 500)
   }

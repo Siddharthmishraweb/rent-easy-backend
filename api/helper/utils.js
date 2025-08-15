@@ -21,9 +21,17 @@ const markTokenAsUsed = async (token, ttl = 900) => {
   await setValue(key, 'used', ttl)
 }
 
+const computePenalty = (amount, daysLate, penaltyPercentPerDay) => {
+  if (!daysLate || daysLate <= 0) return 0
+  const amt = Number(amount) || 0
+  const p = Number(penaltyPercentPerDay) || 0
+  return (amt * (p/100) * daysLate)
+}
+
 export {
     hashPassword,
     comparePassword,
     isResetTokenUsed,
-    markTokenAsUsed
+    markTokenAsUsed,
+    computePenalty
 }

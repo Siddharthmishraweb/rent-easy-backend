@@ -9,5 +9,6 @@ router.get('/user/:userId', RentPaymentController.getPaymentsByUser)
 router.get('/:id', RentPaymentController.getPaymentById)
 router.put('/:id', RentPaymentController.updatePayment)
 router.delete('/:id', RentPaymentController.deletePayment)
+router.post("/payment-breakup", RentPaymentController.getPaymentBreakup)
 
 export default router

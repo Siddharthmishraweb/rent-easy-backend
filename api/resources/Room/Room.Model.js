@@ -2,6 +2,8 @@ import { roomModel } from './Room.Schema.js'
 import { convertToObjectId } from '../../helper/index.js'
 import { PropertyModel } from '../Property/Property.Model.js'
 import { userModel } from '../User/User.Schema.js'
+import { RentalAgreementModel } from '../RentalAgreement/RentalAgreement.Model.js'
+import { rentalAgreementModel } from '../RentalAgreement/RentalAgreement.Schema.js'
 
 const createRoom = async (roomData) => {
   const created = await roomModel.create(roomData);
@@ -47,9 +49,29 @@ const deleteRoomById = async (roomId) => {
  * @param {number} securityDeposit - Security deposit
  */
 export async function assignTenant(roomData) {
-  const { roomId, tenantId, rentAmount, securityDeposit = 0 } = roomData
+  const { roomId, tenantId, agreementEndDate, paymentSchedule } = roomData
   const room = await roomModel.findById({ _id: convertToObjectId(roomId) })
   if (!room) throw new Error("Room not found")
+
+  const rentAmount = room.rent
+  const securityDepositAmount = room.securityDeposit.amount || 0
+  const agreementStartDate = new Date()
+  // console.log("Security Deposit", securityDeposit)
+
+  const agreementData = {
+    rentAmount: rentAmount,
+    securityDeposit: Number(securityDepositAmount),
+    agreementStartDate: agreementStartDate,
+    userId: tenantId,
+    roomId,
+    agreementEndDate,
+    isActive: true,
+    status: 'active',
+    paymentSchedule
+  }
+
+  const agreementResponse = await RentalAgreementModel.createRentalAgreement(agreementData)
+  console.log("agreementResponse: ", agreementResponse)
 
   // ✅ Prevent duplicate active history records
   const hasActiveHistory = room.rentalHistory.some(h => h.endDate === null);
@@ -62,9 +84,9 @@ export async function assignTenant(roomData) {
   room.isAvailable = false
   room.rentalHistory.push({
     tenantId: objectTenantId,
-    startDate: new Date(),
+    startDate: agreementStartDate,
     rentAmount,
-    securityDeposit
+    securityDeposit: securityDepositAmount
   })
 
   await room.save()
@@ -83,9 +105,17 @@ export async function assignTenant(roomData) {
  * @param {string} roomId - Room ID
  */
 export async function vacateTenant(roomId) {
-  console.log("RoomId: ", roomId)
   const room = await roomModel.findById({ _id: convertToObjectId(roomId) })
-  console.log("room: ", room)
+  await rentalAgreementModel.findOneAndUpdate(
+    { roomId },
+    {
+      $set: {
+        agreementEndDate: new Date(),
+        status: 'inactive',
+        isActive: false
+      }
+    }
+  )
 
   if (!room) throw new Error("Room not found")
 
@@ -96,6 +126,8 @@ export async function vacateTenant(roomId) {
   if (lastHistory && !lastHistory.endDate) {
     lastHistory.endDate = new Date()
   }
+
+  const objectTenantId = lastHistory?.tenantId
 
   room.tenantId = null
   room.isAvailable = true
@@ -109,28 +141,6 @@ export async function vacateTenant(roomId) {
   )
 
   return room
-}
-
-
-
-async function recomputeMinMaxRent(propertyId) {
-  const stats = await roomModel.aggregate([
-    { $match: { propertyId: new mongoose.Types.ObjectId(propertyId) } },
-    {
-      $group: {
-        _id: null,
-        minRent: { $min: "$rent" },
-        maxRent: { $max: "$rent" }
-      }
-    }
-  ])
-
-  if (stats.length > 0) {
-    await this.findByIdAndUpdate(propertyId, {
-      minAmount: stats[0].minRent,
-      maxAmount: stats[0].maxRent
-    })
-  }
 }
 
 const RoomModel = {

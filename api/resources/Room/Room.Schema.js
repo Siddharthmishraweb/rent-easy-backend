@@ -11,6 +11,13 @@ const mongooseObject = {
     amount: { type: Number, default: 0 },
     frequency: { type: String, enum: ['monthly', 'annually'], default: 'monthly' }
   },
+  securityDeposit: {
+    amount: { type: Number, default: 0 },
+    frequency: { type: String, enum: ['monthly', 'annually'], default: 'monthly' }
+  },
+  otherCharges: {
+    type: Number, default: 0 
+  },
   isAvailable: { type: Boolean, default: true },
   amenities: [String],
   roomSize: String,

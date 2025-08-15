@@ -2,6 +2,10 @@ import { documentModel } from "./Document.Schema.js"
 import { convertToObjectId } from "../../helper/index.js"
 
 const createDocument = async (documentData) => {
+  if(!documentData.uniqueNumber){
+    documentData.uniqueNumber = `${Date.now()}`
+  }
+
   const exists = await documentModel.findOne({
     docType: documentData.docType,
     uniqueNumber: documentData.uniqueNumber

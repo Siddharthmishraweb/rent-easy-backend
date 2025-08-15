@@ -2,12 +2,12 @@ import { mongoose } from "../../helper/index.js"
 
 const mongooseObject = {
   userId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
-  docType: { type: String, enum: ["aadhaar", "pan", "agreement", "photo"], required: true },
+  docType: { type: String, enum: ["aadhaar", "pan", "agreement", "photo", "sign"], required: true },
   url: { type: String, required: true },
   isVerified: { type: Boolean, default: false },
     uniqueNumber: { // Aadhaar Number, PAN Number, etc.
     type: String,
-    required: true,
+    required: false,
     unique: true,
     trim: true
   },
