@@ -16,6 +16,8 @@ import {
   puppeteer
 } from './lib.js'
 import asyncHandler from 'express-async-handler'
+import { exportToCSV } from './csv.js'
+import AppError from './AppError.js'
 
 import {
   redisClient,
@@ -31,10 +33,11 @@ import {
     hashPassword,
     comparePassword,
     isResetTokenUsed,
-    markTokenAsUsed
+    markTokenAsUsed,
+    computePenalty
 } from './utils.js'
 
-import expressAsync  from './expressAsync.js'
+import expressAsync   from './expressAsync.js'
 import { isRentDueWithinDays } from './date.js'
 
 import { generateResetToken, sendResetEmail } from './mailer.js'
@@ -135,5 +138,8 @@ export {
   Queue,
   Handlebars,
   dayjs,
-  puppeteer
+  puppeteer,
+  computePenalty,
+  exportToCSV,
+  AppError
 }

@@ -5,6 +5,8 @@ const rentPaymentSchema = new mongoose.Schema({
   agreementId: { type: mongoose.Schema.Types.ObjectId, ref: 'RentalAgreement', required: true, index: true },
   userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true, index: true }, // tenant
   ownerId: { type: mongoose.Schema.Types.ObjectId, ref: 'Owner', required: true, index: true },
+  month: { type: Number, required: true }, // 1-12
+  year: { type: Number, required: true },
   transactionNumber: { type: String, required: true, unique: true, index: true },
   paymentDate: { type: Date, required: true },
   dueDate: { type: Date, required: true },
@@ -16,6 +18,7 @@ const rentPaymentSchema = new mongoose.Schema({
   status: { type: String, enum: Object.values(PAYMENT_STATUS), default: PAYMENT_STATUS.PENDING },
   metadata: { type: Object, default: {} }, // store gateway response, etc.
   createdAt: { type: Date, default: Date.now },
+  razorpayOrderId: { type: String, index: true }, // store razorpay order id
   history: [
     {
       updatedAt: { type: Date, default: Date.now },

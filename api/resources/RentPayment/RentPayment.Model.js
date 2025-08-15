@@ -1,8 +1,9 @@
 import { rentPaymentModel } from './RentPayment.Schema.js'
 import { ownerModel } from '../Owner/Owner.Schema.js'
-import { convertToObjectId, dayjs, fs, path, Handlebars, puppeteer, nodemailer } from '../../helper/index.js'
+import { convertToObjectId, dayjs, fs, path, Handlebars, puppeteer, nodemailer, computePenalty } from '../../helper/index.js'
 import { PAYMENT_STATUS } from './RentPayment.Constant.js'
 import paymentQueue from '../../workers/payment.queue.js'
+import { rentalAgreementModel } from '../RentalAgreement/RentalAgreement.Schema.js'
 
 /* compile template once */
 const TEMPLATE_PATH = path.resolve(new URL(import.meta.url).pathname, './templates/receipt.html.hbs')
@@ -318,4 +319,53 @@ export const createRentPayment = async (data) => {
   }
 
   return payment
+}
+
+/**
+ * 1) getDueSummary - calculate amount due for an agreement (rent + penalty) for current month (or month/year passed)
+ */
+export const getDueSummary = async (req, res) => {
+  // console.log(req)
+  const { agreementId, month, year } = req.body
+  const asOfDate = new Date(Date.now())
+  const agreement = await rentalAgreementModel.findById(agreementId).lean()
+  if (!agreement) return res.status(404).json({ success: false, message: 'Agreement not found' })
+
+  const owner = await ownerModel.findOne({ userId: agreement.ownerId }).lean()
+  const penaltyPercentPerDay = owner?.penaltyPercentPerDay || 1
+  const asOf = asOfDate ? dayjs(asOfDate) : dayjs()
+
+  const m = month || (asOf.month() + 1)
+  const y = year || asOf.year()
+  const dueDay = agreement.paymentSchedule?.dueDay || 1
+  const dueDate = dayjs(`${y}-${String(m).padStart(2,'0')}-${String(dueDay).padStart(2,'0')}`)
+  let daysLate = 0
+  if (asOf.isAfter(dueDate, 'day')) daysLate = asOf.diff(dueDate, 'day')
+
+  const rentAmount = Number(agreement.rentAmount)
+  const penaltyAmount = computePenalty(rentAmount, daysLate, penaltyPercentPerDay)
+  const total = rentAmount + penaltyAmount
+
+  // check existing payment
+  const existing = await rentPaymentModel.findOne({ agreementId, month: m, year: y })
+
+
+
+
+  const alreadyPaid = existing && existing.status === 'paid'
+     console.log("AA gaya yaha tak")
+
+const responseData = {
+      agreementId,
+      month: m,
+      year: y,
+      dueDate: dueDate.toDate(),
+      rentAmount,
+      penaltyAmount,
+      totalAmount: total,
+      alreadyPaid,
+      existingPayment: existing || null
+    }
+  
+      return responseData
 }

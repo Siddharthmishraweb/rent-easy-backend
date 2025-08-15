@@ -52,4 +52,20 @@ const deletePayment = async (req, res, next) => {
   }
 }
 
-export { createPayment, getPaymentsByUser, getPaymentById, updatePayment, deletePayment }
+const getPaymentBreakup = async (req, res, next) => {
+  try {
+    const paymentBreakup = await RentPaymentModel.getDueSummary(req)
+    return res.success(200, MSG.FETCH_PAYMENT_BREAKUP, paymentBreakup)
+  } catch (error) {
+    next(error)
+  }
+}
+
+export { 
+  createPayment,
+  getPaymentsByUser,
+  getPaymentById,
+  updatePayment,
+  deletePayment,
+  getPaymentBreakup
+}

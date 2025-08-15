@@ -1,5 +1,10 @@
 import { rentalAgreementModel } from './RentalAgreement.Schema.js'
-import { convertToObjectId, PDFDocument, streamBuffers, nodemailer } from '../../helper/index.js'
+import { convertToObjectId, PDFDocument, streamBuffers, nodemailer, AppError } from '../../helper/index.js'
+import { roomModel } from '../Room/Room.Schema.js'
+import { propertyModel } from '../Property/Property.Schema.js'
+import { ownerModel } from '../Owner/Owner.Schema.js'
+import { documentModel } from '../Document/Document.Schema.js'
+
 
 /**
  * Helper: generate PDF buffer from agreement data
@@ -88,7 +93,45 @@ const sendMailWithAttachment = async ({ to = [], subject = '', text = '', attach
 /* Model Methods */
 
 const createRentalAgreement = async (agreementData, opts = { sendPdf: true, sendEmails: true }) => {
-  // create agreement doc
+    console.log("Aaya toh h yaha par: ")
+    const room = await roomModel.findById(agreementData.roomId)
+    if (!room) {
+      throw new AppError('Room not found')
+      // return res.status(404).json({ error: "Room not found" })
+    }
+
+    const isAlreadyExist = await rentalAgreementModel.find({ roomId: agreementData.roomId, status: agreementData.status })
+    if(isAlreadyExist.length > 0)  throw new AppError('Agreement of this room already exist! ')
+
+    // 2️⃣ Find active rental (where endDate is null)
+    // const activeRental = room.rentalHistory.find(r => r.endDate === null);
+    // if (!activeRental) {
+    //   return res.status(400).json({ error: "No active tenant found for this room" });
+    // }
+
+  const property = await propertyModel.findById(room.propertyId)
+  const owner = await ownerModel.findById(property.ownerId)
+  const ownerUserId = owner.userId
+
+  console.log("OWNER USERID: ", ownerUserId)
+  console.log("tenantId passed in flow: ", agreementData.userId)
+
+  const document = await documentModel.findOne({ userId: ownerUserId, docType: 'sign' })
+  const agreementDocument = await documentModel.findOne({ userId: ownerUserId, docType: 'agreement' })
+  const tentantDocument = await documentModel.findOne({ userId: convertToObjectId(agreementData.userId), docType: 'sign' })
+  console.log("tentantDocument: ", tentantDocument)
+  
+
+  // agreementData.rentAmount = room.rent // given
+  // agreementData.securityDeposit = activeRental.securityDeposit // given
+  // agreementData.agreementStartDate = activeRental.startDate // given
+  // agreementData.userId = activeRental.tenantId //given
+  agreementData.ownerId = property.ownerId
+  agreementData.digitalSignatures = {}
+  agreementData.digitalSignatures.ownerSignatureURL = document.url
+  agreementData.digitalSignatures.userSignatureURL = tentantDocument.url
+  agreementData.signedAgreementURL = agreementDocument.url
+
   const created = await rentalAgreementModel.create(agreementData)
 
   // If opts.sendPdf true, attempt to generate & send PDF (best-effort, do not block creation failure)
@@ -101,17 +144,17 @@ const createRentalAgreement = async (agreementData, opts = { sendPdf: true, send
         .lean()
 
       // attempt to fetch room and property minimal info if available via helper models (lazy require to avoid circular)
-      let room = {}
-      let property = {}
+      // let room = {}
+      // let property = {}
       try {
         // dynamic import to avoid circular requires if your models import this model
         // adjust paths to your project structure
-        const { roomModel } = await import('../Room/Room.Schema.js')
-        room = await roomModel.findById(agg.roomId).lean().catch(()=>({}))
-        if (room && room.propertyId) {
-          const { propertyModel } = await import('../Property/Property.Schema.js')
-          property = await propertyModel.findById(room.propertyId).lean().catch(()=>({}))
-        }
+        // const { roomModel } = await import('../Room/Room.Schema.js')
+        // room = await roomModel.findById(agg.roomId).lean().catch(()=>({}))
+        // if (room && room.propertyId) {
+        //   const { propertyModel } = await import('../Property/Property.Schema.js')
+        //   property = await propertyModel.findById(room.propertyId).lean().catch(()=>({}))
+        // }
       } catch (e) {
         // ignore missing models; PDF will still be created with limited data
       }

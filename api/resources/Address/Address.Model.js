@@ -28,10 +28,12 @@ const deleteAddress = async (id) => {
   return await addressModel.findByIdAndDelete({_id: convertToObjectId(id)})
 }
 
-export {
+const AddressModel = {
   createAddress,
   getAddressByUserId,
   getAddressById,
   deleteAddress,
   updateAddressByAddressId
 }
+
+export default AddressModel
