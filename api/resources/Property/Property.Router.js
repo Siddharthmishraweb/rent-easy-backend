@@ -1,25 +1,192 @@
-import { express } from '../../helper/index.js'
-import {
+import { express, configureRouter } from '../../helper/index.js'
+import PropertyController from './Property.Controller.js'
+import PropertyValidator from './Property.Validator.js'
+
+const {
   createProperty,
   getProperties,
   getPropertyById,
+  getPropertyByCode,
   updatePropertyById,
+  softDeletePropertyById,
+  restorePropertyById,
+  archiveProperty,
   deletePropertyById,
-  getAllPropertiesOfOwner
-} from './Property.Controller.js'
-import {
-  validateCreateProperty,
-  validateUpdateProperty,
-  validateGetPropertyById
-} from './Property.Validator.js'
+  getAllPropertiesOfOwner,
+  recomputeRating,
+  nearby,
+  addImage,
+  removeImage,
+  bulkUpdate,
+  validateCode,
+  getStats,
+  getSimilarById,
+  getSimilarByCode,
+  searchProperty,
+  autoCompleteSearch
+} = PropertyController
 
-const router = express.Router()
+const config = {
+  preMiddlewares: [],
+  postMiddlewares: [],
+  routesConfig: {
+    createProperty: {
+      method: 'post',
+      path: '/',
+      enabled: true,
+      prePipeline: [PropertyValidator.validateCreateProperty],
+      pipeline: [createProperty]
+    },
+    getProperties: {
+      method: 'post',
+      path: '/list',
+      enabled: true,
+      prePipeline: [PropertyValidator.validateList],
+      pipeline: [getProperties]
+    },
+    getPropertyById: {
+      method: 'post',
+      path: '/getById',
+      enabled: true,
+      prePipeline: [PropertyValidator.validateGetPropertyById],
+      pipeline: [getPropertyById]
+    },
+    getPropertyByCode: {
+      method: 'get',
+      path: '/byCode/:code',
+      enabled: true,
+      prePipeline: [PropertyValidator.validateCode],
+      pipeline: [getPropertyByCode]
+    },
+    validateCodePost: {
+      method: 'post',
+      path: '/validate-code',
+      enabled: true,
+      prePipeline: [PropertyValidator.validateCode],
+      pipeline: [validateCode]
+    },
+    validateCodeGet: {
+      method: 'get',
+      path: '/validate-code/:code',
+      enabled: true,
+      prePipeline: [PropertyValidator.validateCode],
+      pipeline: [validateCode]
+    },
+    updatePropertyById: {
+      method: 'put',
+      path: '/updateById',
+      enabled: true,
+      prePipeline: [PropertyValidator.validateUpdateProperty],
+      pipeline: [updatePropertyById]
+    },
+    softDeletePropertyById: {
+      method: 'delete',
+      path: '/softDeleteById',
+      enabled: true,
+      prePipeline: [PropertyValidator.validateGetPropertyById],
+      pipeline: [softDeletePropertyById]
+    },
+    restorePropertyById: {
+      method: 'put',
+      path: '/restoreById',
+      enabled: true,
+      prePipeline: [PropertyValidator.validateGetPropertyById],
+      pipeline: [restorePropertyById]
+    },
+    archiveProperty: {
+      method: 'put',
+      path: '/archive',
+      enabled: true,
+      prePipeline: [],
+      pipeline: [archiveProperty]
+    },
+    deletePropertyById: {
+      method: 'delete',
+      path: '/deleteById',
+      enabled: true,
+      prePipeline: [PropertyValidator.validateGetPropertyById],
+      pipeline: [deletePropertyById]
+    },
+    getAllPropertiesOfOwner: {
+      method: 'post',
+      path: '/getOwnersProperty',
+      enabled: true,
+      prePipeline: [],
+      pipeline: [getAllPropertiesOfOwner]
+    },
+    recomputeRating: {
+      method: 'post',
+      path: '/recomputeRating',
+      enabled: true,
+      prePipeline: [],
+      pipeline: [recomputeRating]
+    },
+    nearby: {
+      method: 'post',
+      path: '/nearby',
+      enabled: true,
+      prePipeline: [PropertyValidator.validateGeoNearby],
+      pipeline: [nearby]
+    },
+    addImage: {
+      method: 'post',
+      path: '/image/add',
+      enabled: true,
+      prePipeline: [],
+      pipeline: [addImage]
+    },
+    removeImage: {
+      method: 'post',
+      path: '/image/remove',
+      enabled: true,
+      prePipeline: [],
+      pipeline: [removeImage]
+    },
+    bulkUpdate: {
+      method: 'post',
+      path: '/bulkUpdate',
+      enabled: true,
+      prePipeline: [],
+      pipeline: [bulkUpdate]
+    },
+    getStats: {
+      method: 'post',
+      path: '/stats',
+      enabled: true,
+      prePipeline: [],
+      pipeline: [getStats]
+    },
+    getSimilarById: {
+      method: 'post',
+      path: '/similar/byId',
+      enabled: true,
+      prePipeline: [],
+      pipeline: [getSimilarById]
+    },
+    getSimilarByCode: {
+      method: 'get',
+      path: '/similar/byCode/:code',
+      enabled: true,
+      prePipeline: [],
+      pipeline: [getSimilarByCode]
+    },
+    searchProperty: {
+      method: 'post',
+      path: '/search',
+      enabled: true,
+      prePipeline: [],
+      pipeline: [searchProperty]
+    },
+    autoCompleteSearch: {
+      method: 'post',
+      path: '/autocomplete',
+      enabled: true,
+      prePipeline: [],
+      pipeline: [autoCompleteSearch]
+    }
+  }
+}
 
-router.post('/', validateCreateProperty, createProperty)
-router.post('/list', getProperties) // body: { query, page, limit }
-router.post('/getById', validateGetPropertyById, getPropertyById)
-router.put('/updateById', validateUpdateProperty, updatePropertyById)
-router.delete('/deleteById', validateGetPropertyById, deletePropertyById)
-router.post('/getOwnersProperty', getAllPropertiesOfOwner)
+const PropertyRouter = configureRouter(express.Router(), config)
 
-export default router
+export default PropertyRouter

@@ -13,6 +13,7 @@ import Handlebars from 'handlebars'
 import puppeteer from 'puppeteer'
 import Queue from 'bull'
 import dayjs from 'dayjs'
+import crypto from "crypto"
 
 export {
   mongoose,
@@ -29,5 +30,6 @@ export {
   Handlebars,
   puppeteer,
   Queue,
-  dayjs
+  dayjs,
+  crypto
 }

@@ -6,11 +6,14 @@ import dotenv from 'dotenv'
 import { responseHandler } from './api/middleware/index.js'
 import errorHandler from './api/middleware/errorHandler.js'
 import routes from './api/routes/index.js'
-import "./api/cron/rent-reminder/rentReminder.js"; // Start cron jobs
-
+import "./api/cron/rent-reminder/rentReminder.js"
+import { loggerMiddleware } from './api/helper/logger.js'
+import CustomError from './api/helper/customError.js'
 
 dotenv.config()
 const app = express()
+
+app.use(loggerMiddleware);
 
 // ---------- MIDDLEWARE ----------
 app.use(express.json())
@@ -25,7 +28,6 @@ app.use(responseHandler)
 app.use('/api', routes)
 
 app.use(errorHandler)
-
 
 
 // ---------- 404 HANDLER ----------
