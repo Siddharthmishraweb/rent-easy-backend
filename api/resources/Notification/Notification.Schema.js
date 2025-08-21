@@ -11,6 +11,10 @@ const notificationSchema = new mongoose.Schema({
 }, { timestamps: true })
 
 notificationSchema.index({ userId: 1, isRead: 1 })
+
+notificationSchema.set('toJSON', { virtuals: true })
+notificationSchema.set('toObject', { virtuals: true })
+
 const notificationModel = mongoose.model('Notification', notificationSchema)
 
 export { notificationSchema, notificationModel }

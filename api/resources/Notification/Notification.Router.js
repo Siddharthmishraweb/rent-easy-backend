@@ -1,17 +1,49 @@
-import { express } from '../../helper/index.js'
-import {
+import { express, configureRouter } from '../../helper/index.js'
+import NotificationController from './Notification.Controller.js'
+import NotificationValidator from './Notification.Validator.js'
+
+const {
   getNotificationsByUser,
   getUnreadCount,
   markAsRead,
   deleteNotification
-} from './Notification.Controller.js'
-import { validateGetByUser, validateMarkRead } from './Notification.Validator.js'
+} = NotificationController
 
-const router = express.Router()
+const config = {
+  preMiddlewares: [],
+  postMiddlewares: [],
+  routesConfig: {
+    getNotificationsByUser: {
+      method: 'post',
+      path: '/list',
+      enabled: true,
+      prePipeline: [NotificationValidator.validateGetByUser],
+      pipeline: [getNotificationsByUser]
+    },
+    getUnreadCount: {
+      method: 'post',
+      path: '/unreadCount',
+      enabled: true,
+      prePipeline: [NotificationValidator.validateGetByUser],
+      pipeline: [getUnreadCount]
+    },
+    markAsRead: {
+      method: 'put',
+      path: '/markRead',
+      enabled: true,
+      prePipeline: [NotificationValidator.validateMarkRead],
+      pipeline: [markAsRead]
+    },
+    deleteNotification: {
+      method: 'delete',
+      path: '/delete',
+      enabled: true,
+      prePipeline: [],
+      pipeline: [deleteNotification]
+    }
+  }
+}
 
-router.post('/list', validateGetByUser, getNotificationsByUser) // body: { userId, page, limit, isRead }
-router.post('/unreadCount', validateGetByUser, getUnreadCount)
-router.put('/markRead', validateMarkRead, markAsRead) // body: { userId, notificationIds? }
-router.delete('/delete', deleteNotification) // body: { notificationId }
+const OwnerRouter = configureRouter(express.Router(), config)
 
-export default router
+export default OwnerRouter

@@ -1,8 +1,8 @@
-import { mongoose } from "../../helper/index.js"
+import { mongoose } from '../../helper/index.js'
 
 const mongooseObject = {
-  userId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
-  docType: { type: String, enum: ["aadhaar", "pan", "agreement", "photo", "sign"], required: true },
+  userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+  docType: { type: String, enum: ['aadhaar', 'pan', 'agreement', 'photo', 'sign'], required: true },
   url: { type: String, required: true },
   isVerified: { type: Boolean, default: false },
     uniqueNumber: { // Aadhaar Number, PAN Number, etc.
@@ -20,6 +20,9 @@ const documentSchema = new mongoose.Schema(mongooseObject, mongooseOptions)
 
 documentSchema.index({ docType: 1, uniqueNumber: 1 }, { unique: true })
 
-const documentModel = mongoose.model("Document", documentSchema)
+documentSchema.set('toJSON', { virtuals: true })
+documentSchema.set('toObject', { virtuals: true })
+
+const documentModel = mongoose.model('Document', documentSchema)
 
 export { documentSchema, documentModel }
