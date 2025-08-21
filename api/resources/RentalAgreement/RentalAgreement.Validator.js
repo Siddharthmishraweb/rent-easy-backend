@@ -3,7 +3,7 @@ const { isValidObjectId } = mongoose
 
 const ENABLE_VALIDATION = process.env.ENABLE_VALIDATION === 'true'
 
-export const validateCreateAgreement = (req, res, next) => {
+const validateCreateAgreement = (req, res, next) => {
   if (!ENABLE_VALIDATION) return next()
   const data = req.body.agreementData || {}
   const { roomId, userId, ownerId, agreementStartDate, agreementEndDate, rentAmount, securityDeposit } = data
@@ -23,15 +23,23 @@ export const validateCreateAgreement = (req, res, next) => {
   next()
 }
 
-export const validateIdInBody = (req, res, next) => {
+const validateIdInBody = (req, res, next) => {
   if (!ENABLE_VALIDATION) return next()
   if (!req.body.agreementId) return res.status(400).json({ message: 'agreementId is required' })
   next()
 }
 
-export const validateSendPdf = (req, res, next) => {
+const validateSendPdf = (req, res, next) => {
   if (!ENABLE_VALIDATION) return next()
   const { agreementId } = req.body
   if (!agreementId) return res.status(400).json({ message: 'agreementId is required' })
   next()
 }
+
+const RentalAgreement = {
+  validateCreateAgreement,
+  validateIdInBody,
+  validateSendPdf
+}
+
+export default RentalAgreement

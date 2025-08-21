@@ -1,19 +1,56 @@
-import { express } from '../../helper/index.js'
+import { express, configureRouter } from '../../helper/index.js'
+import AddressController from './Address.Controller.js'
 
-import {
-  createAddress,
-  updateAddressByAddressId,
+const {
   getAddressByUserId,
   getAddressById,
+  createAddress,
+  updateAddressByAddressId,
   deleteAddress
-} from './Address.Controller.js'
+} = AddressController
 
-const router = express.Router()
+const config = {
+  preMiddlewares: [],
+  postMiddlewares: [],
+  routesConfig: {
+    getAddressByUserId: {
+      method: 'post',
+      path: '/get-by-user',
+      enabled: true,
+      prePipeline: [],
+      pipeline: [getAddressByUserId]
+    },
+    getAddressById: {
+      method: 'post',
+      path: '/get-by-id',
+      enabled: true,
+      prePipeline: [],
+      pipeline: [getAddressById]
+    },
+    createAddress: {
+      method: 'post',
+      path: '/create',
+      enabled: true,
+      prePipeline: [],
+      pipeline: [createAddress]
+    },
+    updateAddressByAddressId: {
+      method: 'put',
+      path: '/update',
+      enabled: true,
+      prePipeline: [],
+      pipeline: [updateAddressByAddressId]
+    },
+    deleteAddress: {
+      method: 'post',
+      path: '/delete',
+      enabled: true,
+      prePipeline: [],
+      pipeline: [deleteAddress]
+    }
+  }
+}
 
-router.post('/get-by-user', getAddressByUserId)
-router.post('/get-by-id', getAddressById)
-router.post('/create', createAddress)
-router.put('/update', updateAddressByAddressId)
-router.post('/delete', deleteAddress)
+const AddressRouter = configureRouter(express.Router(), config)
 
-export default router
+export default AddressRouter

@@ -1,4 +1,3 @@
-// logger.js
 import pino from "pino";
 import path from 'path'
 import { fileURLToPath } from "url";
@@ -9,8 +8,6 @@ const __dirname = path.dirname(__filename);
 
 // ✅ Go one level up to project root if logger.js is in /api/helper/
 const rootDir = path.resolve(__dirname, "../../"); 
-
-console.log("path.join(rootDir,): ", path.join(rootDir, "app.log"))
 
 const fileTransport = pino.transport({
   target: 'pino/file',

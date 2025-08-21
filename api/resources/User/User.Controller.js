@@ -1,49 +1,39 @@
-import {
-  registerUserService,
-  loginUserService,
-  googleLoginService,
-  resetPasswordService,
-  verifyResetTokenService,
-  updatePasswordService,
-} from './User.Model.js'
-
+import UserModel from './User.Model.js'
 import { USER_MESSAGES } from './User.Constant.js' 
 
 const registerUser = async (req, res) => {
-  const data = await registerUserService(req.body)
-  res.status(201).json({ message: USER_MESSAGES.USER_CREATED, data: data })
+  const data = await UserModel.registerUserService(req.body)
+  return res.success(201, USER_MESSAGES.USER_CREATED, data)
 }
 
 const googleLogin = async (req, res) => {
   const { token } = req.body
-  const data = await googleLoginService(token)
-  res.status(201).json({ message: USER_MESSAGES.GOOGLE_LOGIN, data: data })
+  const data = await UserModel.googleLoginService(token)
+
+  return res.success(201, USER_MESSAGES.GOOGLE_LOGIN, data)
 }
 
 const loginUser = async (req, res) => {
-  const data = await loginUserService(req.body)
-  res.status(200).json({ message: USER_MESSAGES.USER_LOGIN, data: data })
+  const data = await UserModel.loginUserService(req.body)
+  return res.success(200, USER_MESSAGES.USER_LOGIN, data)
 }
 
-
 const resetPassword = async (req, res) => {
-  const data = await resetPasswordService(req.body)
-  res.status(200).json({ message: USER_MESSAGES.RESET_PASSWORD, data: data })
+  const data = await UserModel.resetPasswordService(req.body)
+  return res.success(200, USER_MESSAGES.RESET_PASSWORD, data)
 }
 
 const verifyResetToken = async (req, res) => {
-  const data = await verifyResetTokenService(req.body)
-  res.status(200).json({ message: USER_MESSAGES.VERIFY_RESET_TOKEN, data: data })
+  const data = await UserModel.verifyResetTokenService(req.body)
+  return res.success(200, USER_MESSAGES.VERIFY_RESET_TOKEN, data)
 }
 
 const updatePassword = async (req, res) => {
-  const data = await updatePasswordService(req.body)
-  res.status(200).json({ message: USER_MESSAGES.UPDATE_PASSWORD, data: data })
-
-  // return res.success(data)
+  const data = await UserModel.updatePasswordService(req.body)
+  return res.success(200, USER_MESSAGES.UPDATE_PASSWORD, data)
 }
 
-export {
+const UserController = {
   registerUser,
   loginUser,
   googleLogin,
@@ -51,3 +41,5 @@ export {
   verifyResetToken,
   updatePassword
 }
+
+export default UserController

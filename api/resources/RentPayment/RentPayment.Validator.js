@@ -2,7 +2,7 @@ import { mongoose } from '../../helper/index.js'
 const { isValidObjectId } = mongoose
 const ENABLE_VALIDATION = process.env.ENABLE_VALIDATION === 'true'
 
-export const validateCreatePayment = (req, res, next) => {
+const validateCreatePayment = (req, res, next) => {
   if (!ENABLE_VALIDATION) return next()
   const {
     agreementId,
@@ -31,3 +31,9 @@ export const validateCreatePayment = (req, res, next) => {
 
   next()
 }
+
+const RentPaymentValidator = {
+  validateCreatePayment
+}
+
+export default RentPaymentValidator

@@ -20,6 +20,9 @@ const userSchema = new mongoose.Schema(mongooseObject, mongooseOptions)
 
 userSchema.index({ "address.geoLocation": "2dsphere" })
 
+userSchema.set('toJSON', { virtuals: true })
+userSchema.set('toObject', { virtuals: true })
+
 const userModel = mongoose.model("User", userSchema)
 
 export { userSchema, userModel }

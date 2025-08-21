@@ -44,6 +44,6 @@ const config = {
   }
 }
 
-const OwnerRouter = configureRouter(express.Router(), config)
+const NotificationRouter = configureRouter(express.Router(), config)
 
-export default OwnerRouter
+export default NotificationRouter

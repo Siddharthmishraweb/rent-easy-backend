@@ -24,6 +24,9 @@ const mongooseOptions = { timestamps: true }
 const addressSchema = new mongoose.Schema(mongooseObject, mongooseOptions)
 addressSchema.index({ geoLocation: "2dsphere" })
 
+addressSchema.set('toJSON', { virtuals: true })
+addressSchema.set('toObject', { virtuals: true })
+
 const addressModel = mongoose.model("Address", addressSchema)
 
 export { addressSchema, addressModel }

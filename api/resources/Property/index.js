@@ -1,3 +1,5 @@
-import propertyRouter from './Property.Router.js'
+import PropertyRouter from './Property.Router.js'
+import PropertyController from './Property.Controller.js'
+import PropertyModel from './Property.Model.js'
 
-export default propertyRouter
+export { PropertyRouter, PropertyController, PropertyModel }

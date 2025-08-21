@@ -1,6 +1,6 @@
 import AddressModel from './Address.Model.js'
-import AppError from "../../helper/AppError.js"
-import { ADDRESS_MESSAGES as MSG } from "./Address.Constant.js"
+import AppError from '../../helper/AppError.js'
+import { ADDRESS_MESSAGES as MSG } from './Address.Constant.js'
 
 const createAddress = async (req, res, next) => {
   try {
@@ -56,10 +56,12 @@ const deleteAddress = async (req, res, next) => {
   }
 }
 
-export {
-    createAddress,
-    getAddressByUserId,
-    getAddressById,
-    deleteAddress,
-    updateAddressByAddressId
+const AddressController = {
+  createAddress,
+  getAddressByUserId,
+  getAddressById,
+  deleteAddress,
+  updateAddressByAddressId
 }
+
+export default AddressController

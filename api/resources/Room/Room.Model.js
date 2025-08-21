@@ -1,8 +1,8 @@
 import { roomModel } from './Room.Schema.js'
 import { convertToObjectId } from '../../helper/index.js'
-import { PropertyModel } from '../Property/Property.Model.js'
+import PropertyModel from '../Property/Property.Model.js'
 import { userModel } from '../User/User.Schema.js'
-import { RentalAgreementModel } from '../RentalAgreement/RentalAgreement.Model.js'
+import RentalAgreementModel from '../RentalAgreement/RentalAgreement.Model.js'
 import { rentalAgreementModel } from '../RentalAgreement/RentalAgreement.Schema.js'
 
 const createRoom = async (roomData) => {
@@ -11,7 +11,6 @@ const createRoom = async (roomData) => {
 }
 
 const getRooms = async (filter = {}, options = {}) => {
-  // supports pagination
   const q = { ...filter }
   const page = options.page > 0 ? parseInt(options.page) : 0
   const limit = options.limit > 0 ? parseInt(options.limit) : 0
@@ -27,7 +26,6 @@ const getRoomById = async (id) => {
 const updateRoomById = async (roomId, updateData) => {
   const updated = await roomModel.findByIdAndUpdate(convertToObjectId(roomId), { $set: updateData }, { new: true })
   if (updated && updateData.rating !== undefined) {
-    // recompute property rating if rating changed
     await PropertyModel.recomputePropertyRating(updated.propertyId)
   }
   return updated
@@ -41,13 +39,6 @@ const deleteRoomById = async (roomId) => {
   return deleted
 }
 
-/**
- * Assign a tenant to a room (Move-in)
- * @param {string} roomId - Room ID
- * @param {string} tenantId - User ID of tenant
- * @param {number} rentAmount - Monthly rent
- * @param {number} securityDeposit - Security deposit
- */
 export async function assignTenant(roomData) {
   const { roomId, tenantId, agreementEndDate, paymentSchedule } = roomData
   const room = await roomModel.findById({ _id: convertToObjectId(roomId) })
@@ -56,7 +47,6 @@ export async function assignTenant(roomData) {
   const rentAmount = room.rent
   const securityDepositAmount = room.securityDeposit.amount || 0
   const agreementStartDate = new Date()
-  // console.log("Security Deposit", securityDeposit)
 
   const agreementData = {
     rentAmount: rentAmount,
@@ -71,15 +61,12 @@ export async function assignTenant(roomData) {
   }
 
   const agreementResponse = await RentalAgreementModel.createRentalAgreement(agreementData)
-  console.log("agreementResponse: ", agreementResponse)
 
-  // ✅ Prevent duplicate active history records
   const hasActiveHistory = room.rentalHistory.some(h => h.endDate === null);
   if (hasActiveHistory) {
     throw new Error("This room has an active rental record. Vacate first.");
   }
 
-  // room.tenantId = convertToObjectId(tenantId)
   const objectTenantId = convertToObjectId(tenantId)
   room.isAvailable = false
   room.rentalHistory.push({
@@ -100,10 +87,6 @@ export async function assignTenant(roomData) {
   return room
 }
 
-/**
- * Vacate a tenant from a room (Move-out)
- * @param {string} roomId - Room ID
- */
 export async function vacateTenant(roomId) {
   const room = await roomModel.findById({ _id: convertToObjectId(roomId) })
   await rentalAgreementModel.findOneAndUpdate(
@@ -119,9 +102,6 @@ export async function vacateTenant(roomId) {
 
   if (!room) throw new Error("Room not found")
 
-  // if (!room.tenantId) throw new Error("Room is already vacant")
-
-  // Update latest rental history record's endDate
   const lastHistory = room.rentalHistory[room.rentalHistory.length - 1]
   if (lastHistory && !lastHistory.endDate) {
     lastHistory.endDate = new Date()
@@ -143,16 +123,6 @@ export async function vacateTenant(roomId) {
   return room
 }
 
-const RoomModel = {
-  createRoom,
-  getRooms,
-  getRoomById,
-  updateRoomById,
-  deleteRoomById,
-  assignTenant,
-  vacateTenant,
-}
-
 async function recomputePropertyRating(propertyId) {
 
   const stats = await roomModel.aggregate([
@@ -169,7 +139,6 @@ async function recomputePropertyRating(propertyId) {
     rating: stats.length > 0 ? stats[0].avgRating : 0
   })
 }
-
 
 async function recomputePropertyStats(propertyId) {
 
@@ -192,13 +161,22 @@ async function recomputePropertyStats(propertyId) {
       rating: stats[0].avgRating || 0
     })
   } else {
-    // If no rooms exist, reset stats
     await this.findByIdAndUpdate(propertyId, {
       minAmount: null,
       maxAmount: null,
       rating: 0
     })
   }
+}
+
+const RoomModel = {
+  createRoom,
+  getRooms,
+  getRoomById,
+  updateRoomById,
+  deleteRoomById,
+  assignTenant,
+  vacateTenant,
 }
 
 export default RoomModel

@@ -1432,7 +1432,7 @@ function escapeRegex(str) {
   return String(str).replace(/[.*+?^${}()|[\]\\]/g, "\\$&")
 }
 
-export const PropertyModel = {
+const PropertyModel = {
   createProperty,
   getProperties,
   getPropertyById,
@@ -1455,3 +1455,4 @@ export const PropertyModel = {
   autoCompleteSearch
 }
 
+export default PropertyModel

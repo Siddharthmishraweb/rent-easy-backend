@@ -1,4 +1,4 @@
-import { PropertyModel } from './Property.Model.js'
+import PropertyModel from './Property.Model.js'
 import { PROPERTY_MESSAGES as MSG } from './Property.Constant.js'
 import { PROPERTY_SIMILAR_WEIGHTS as SIM_W } from './Property.Constant.js'
 import { logger } from '../../helper/index.js'

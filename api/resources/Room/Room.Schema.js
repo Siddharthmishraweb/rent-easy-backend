@@ -6,7 +6,7 @@ const mongooseObject = {
   roomType: { type: String, enum: ['Single', 'Double', 'Suite', 'Flat', 'Other'], required: true },
   description: String,
   rent: { type: Number, required: true },
-  rentDueDay: { type: Number, min: 1, max: 31 }, // monthly due date (better than full date)
+  rentDueDay: { type: Number, min: 1, max: 31 },
   maintenanceCharge: {
     amount: { type: Number, default: 0 },
     frequency: { type: String, enum: ['monthly', 'annually'], default: 'monthly' }
@@ -24,7 +24,7 @@ const mongooseObject = {
   floorNumber: Number,
   images: [String],
   addressId: { type: mongoose.Schema.Types.ObjectId, ref: "Address", required: true },
-  rating: { type: Number, min: 0, max: 5, default: 0 }, // room rating
+  rating: { type: Number, min: 0, max: 5, default: 0 },
   rentalHistory: [
     {
       tenantId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
@@ -44,6 +44,9 @@ roomSchema.index({ 'address.geoLocation': '2dsphere' })
 roomSchema.index({ rent: 1 })
 roomSchema.index({ isAvailable: 1 })
 roomSchema.index({ propertyId: 1 })
+
+roomSchema.set('toJSON', { virtuals: true })
+roomSchema.set('toObject', { virtuals: true })
 
 const roomModel = mongoose.model('Room', roomSchema)
 

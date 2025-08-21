@@ -1,5 +1,8 @@
-import { express } from '../../helper/index.js'
-import {
+import { express, configureRouter } from '../../helper/index.js'
+import RentalAgreementController from './RentalAgreement.Controller.js'
+import RentalAgreementValidator from './RentalAgreement.Validator.js'
+
+const {
   createAgreement,
   listAgreements,
   getAgreementById,
@@ -7,22 +10,64 @@ import {
   terminateAgreement,
   deleteAgreement,
   generatePdfAndSend
-} from './RentalAgreement.Controller.js'
+} = RentalAgreementController
 
-import {
-  validateCreateAgreement,
-  validateIdInBody,
-  validateSendPdf
-} from './RentalAgreement.Validator.js'
+const config = {
+  preMiddlewares: [],
+  postMiddlewares: [],
+  routesConfig: {
+    createAgreement: {
+      method: 'post',
+      path: '/',
+      enabled: true,
+      prePipeline: [RentalAgreementValidator.validateCreateAgreement],
+      pipeline: [createAgreement]
+    },
+    listAgreements: {
+      method: 'post',
+      path: '/list',
+      enabled: true,
+      prePipeline: [],
+      pipeline: [listAgreements]
+    },
+    getAgreementById: {
+      method: 'post',
+      path: '/getById',
+      enabled: true,
+      prePipeline: [RentalAgreementValidator.validateIdInBody],
+      pipeline: [getAgreementById]
+    },
+    updateAgreementById: {
+      method: 'put',
+      path: '/updateById',
+      enabled: true,
+      prePipeline: [RentalAgreementValidator.validateIdInBody],
+      pipeline: [updateAgreementById]
+    },
+    terminateAgreement: {
+      method: 'put',
+      path: '/terminate',
+      enabled: true,
+      prePipeline: [RentalAgreementValidator.validateIdInBody],
+      pipeline: [terminateAgreement]
+    },
+    deleteAgreement: {
+      method: 'delete',
+      path: '/deleteById',
+      enabled: true,
+      prePipeline: [RentalAgreementValidator.validateIdInBody],
+      pipeline: [deleteAgreement]
+    },
+    generatePdfAndSend: {
+      method: 'post',
+      path: '/generatePdf',
+      enabled: true,
+      prePipeline: [RentalAgreementValidator.validateIdInBody],
+      pipeline: [generatePdfAndSend]
+    }
+  }
+}
 
-const router = express.Router()
+const RentalAgreementRouter = configureRouter(express.Router(), config)
 
-router.post('/', validateCreateAgreement, createAgreement)              // create & optionally email PDF
-router.post('/list', listAgreements)                                   // { query, page, limit }
-router.post('/getById', validateIdInBody, getAgreementById)
-router.put('/updateById', validateIdInBody, updateAgreementById)
-router.put('/terminate', validateIdInBody, terminateAgreement)
-router.delete('/deleteById', validateIdInBody, deleteAgreement)
-router.post('/generatePdf', validateSendPdf, generatePdfAndSend)        // returns base64 pdf (or you can email)
-
-export default router
+export default RentalAgreementRouter
