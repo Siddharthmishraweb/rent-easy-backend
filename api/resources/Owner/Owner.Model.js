@@ -1,30 +1,30 @@
-import { ownerModel } from "./Owner.Schema.js"
+import { ownerModel } from './Owner.Schema.js'
 import { propertyModel } from '../Property/Property.Schema.js'
 import { rentPaymentModel as rentModel } from '../RentPayment/RentPayment.Schema.js'
-import { mongoose } from "../../helper/index.js"
+import { mongoose } from '../../helper/index.js'
 import { documentModel } from '../Document/Document.Schema.js'
 
-export const createOwner = async (ownerData) => {
+const createOwner = async (ownerData) => {
   return await ownerModel.create(ownerData)
 }
 
-export const getOwners = async (filter = {}, projection = {}, options = {}) => {
-  return await ownerModel.find(filter, projection, options).populate("userId").populate("ownedProperties")
+const getOwners = async (filter = {}, projection = {}, options = {}) => {
+  return await ownerModel.find(filter, projection, options).populate('userId').populate('ownedProperties')
 }
 
-export const getOwnerById = async (id) => {
-  return await ownerModel.findById(id).populate("userId").populate("ownedProperties")
+const getOwnerById = async (id) => {
+  return await ownerModel.findById(id).populate('userId').populate('ownedProperties')
 }
 
-export const updateOwner = async (id, updateData) => {
+const updateOwner = async (id, updateData) => {
   return await ownerModel.findByIdAndUpdate(id, updateData, { new: true })
 }
 
-export const deleteOwner = async (id) => {
+const deleteOwner = async (id) => {
   return await ownerModel.findByIdAndDelete(id)
 }
 
-export const getOwnerDashboard = async (ownerId) => {
+const getOwnerDashboard = async (ownerId) => {
   try {
     // 1️⃣ Get Owner Details
     const owner = await ownerModel.findById(ownerId)
@@ -35,15 +35,11 @@ export const getOwnerDashboard = async (ownerId) => {
       return res.status(404).json({ error: 'Owner not found' });
     }
 
-    console.log("Owner:: ", owner)
+    console.log('Owner:: ', owner)
 
     const documents = await documentModel.find({ userId: owner.userId._id })
       .select('-__v')  // exclude __v if you want
       .lean();
-
-    console.log("Document:::::::: ", documents)
-
-
 
     // 2️⃣ Get All Properties with Rooms
     const properties = await propertyModel.find({ ownerId: owner._id })
@@ -141,3 +137,14 @@ export const getOwnerDashboard = async (ownerId) => {
     throw new Error(err)
   }
 }
+
+const OwnerModel = {
+  createOwner,
+  getOwners,
+  getOwnerById,
+  updateOwner,
+  deleteOwner,
+  getOwnerDashboard
+}
+
+export default OwnerModel

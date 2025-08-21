@@ -1,5 +1,8 @@
-import { express } from '../../helper/index.js'
-import {
+import { express, configureRouter } from '../../helper/index.js'
+import DocumentController from './Document.Controller.js'
+import DocumentValidator from './Document.Validator.js'
+
+const {
   createDocument,
   getDocuments,
   getDocumentById,
@@ -9,29 +12,79 @@ import {
   updateDocumentsByUserId,
   deleteDocumentsByUserId,
   getDocumentByType
-} from './Document.Controller.js'
+} = DocumentController
 
-import {
-  validateCreateDocument,
-  validateGetDocumentById,
-  validateUpdateDocumentById,
-  validateDeleteDocument,
-  validateGetAllDocumentsByUserId,
-  validateUpdateDocumentsByUserId,
-  validateDeleteDocumentsByUserId,
-  validateGetDocumentByType
-} from './Document.Validator.js'
+const config = {
+  preMiddlewares: [],
+  postMiddlewares: [],
+  routesConfig: {
+    createDocument: {
+      method: 'post',
+      path: '/',
+      enabled: true,
+      prePipeline: [DocumentValidator.validateCreateDocument],
+      pipeline: [createDocument]
+    },
+    getDocuments: {
+      method: 'get',
+      path: '/',
+      enabled: true,
+      prePipeline: [],
+      pipeline: [getDocuments]
+    },
+    getDocumentById: {
+      method: 'post',
+      path: '/getById',
+      enabled: true,
+      prePipeline: [DocumentValidator.validateGetDocumentById],
+      pipeline: [getDocumentById]
+    },
+    updateDocumentById: {
+      method: 'put',
+      path: '/updateById',
+      enabled: true,
+      prePipeline: [DocumentValidator.validateUpdateDocumentById],
+      pipeline: [updateDocumentById]
+    },
+    deleteDocument: {
+      method: 'delete',
+      path: '/deleteById',
+      enabled: true,
+      prePipeline: [DocumentValidator.validateDeleteDocument],
+      pipeline: [deleteDocument]
+    },
+    getAllDocumentsByUserId: {
+      method: 'post',
+      path: '/getAllByUserId',
+      enabled: true,
+      prePipeline: [DocumentValidator.validateGetAllDocumentsByUserId],
+      pipeline: [getAllDocumentsByUserId]
+    },
+    updateDocumentsByUserId: {
+      method: 'put',
+      path: '/getAllByUserId',
+      enabled: true,
+      prePipeline: [DocumentValidator.validateUpdateDocumentsByUserId],
+      pipeline: [updateDocumentsByUserId]
+    },
+    deleteDocumentsByUserId: {
+      method: 'delete',
+      path: '/deleteByUserId',
+      enabled: true,
+      prePipeline: [DocumentValidator.validateDeleteDocumentsByUserId],
+      pipeline: [deleteDocumentsByUserId]
+    },
+    getByType: {
+      method: 'post',
+      path: '/getByType',
+      enabled: true,
+      prePipeline: [DocumentValidator.validateGetDocumentByType],
+      pipeline: [getDocumentByType]
+    }
+  }
+}
 
-const router = express.Router()
+const DocumentRouter = configureRouter(express.Router(), config)
 
-router.post('/', validateCreateDocument, createDocument)
-router.get('/', getDocuments)
-router.post('/getById', validateGetDocumentById, getDocumentById)
-router.put('/updateById', validateUpdateDocumentById, updateDocumentById)
-router.delete('/deleteById', validateDeleteDocument, deleteDocument)
-router.post('/getAllByUserId', validateGetAllDocumentsByUserId, getAllDocumentsByUserId)
-router.put('/updateByUserId', validateUpdateDocumentsByUserId, updateDocumentsByUserId)
-router.delete('/deleteByUserId', validateDeleteDocumentsByUserId, deleteDocumentsByUserId)
-router.post('/getByType', validateGetDocumentByType, getDocumentByType)
+export default DocumentRouter
 
-export default router

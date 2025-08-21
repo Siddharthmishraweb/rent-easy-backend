@@ -1,4 +1,4 @@
-export const validateCreateOwner = (req, res, next) => {
+const validateCreateOwner = (req, res, next) => {
   const { userId, bankDetails } = req.body
   if (!userId) {
     return res.status(400).json({ success: false, error: "userId is required" })
@@ -8,3 +8,9 @@ export const validateCreateOwner = (req, res, next) => {
   }
   next()
 }
+
+const OwnerValidator = {
+  validateCreateOwner
+}
+
+export default OwnerValidator

@@ -1,21 +1,65 @@
-import { express } from "../../helper/index.js"
-import {
-  createOwnerController,
-  getOwnersController,
-  getOwnerByIdController,
-  updateOwnerController,
-  deleteOwnerController,
+import { express, configureRouter } from '../../helper/index.js'
+import OwnerController from './Owner.Controller.js'
+import OwnerValidator from './Owner.Validator.js'
+
+const {
+  createOwner,
+  getOwners,
+  getOwnerById,
+  updateOwner,
+  deleteOwner,
   getOwnerDashboard
-} from "./Owner.Controller.js"
-import { validateCreateOwner } from './Owner.Validator.js'
+} = OwnerController
 
-const router = express.Router()
+const config = {
+  preMiddlewares: [],
+  postMiddlewares: [],
+  routesConfig: {
+    createOwner: {
+      method: 'post',
+      path: '/',
+      enabled: true,
+      prePipeline: [OwnerValidator.validateCreateOwner],
+      pipeline: [createOwner]
+    },
+    getOwners: {
+      method: 'get',
+      path: '/',
+      enabled: true,
+      prePipeline: [],
+      pipeline: [getOwners]
+    },
+    getOwnerById: {
+      method: 'get',
+      path: '/:id',
+      enabled: true,
+      prePipeline: [],
+      pipeline: [getOwnerById]
+    },
+    updateOwner: {
+      method: 'put',
+      path: '/:id',
+      enabled: true,
+      prePipeline: [],
+      pipeline: [updateOwner]
+    },
+    deleteOwner: {
+      method: 'delete',
+      path: '/:id',
+      enabled: true,
+      prePipeline: [],
+      pipeline: [deleteOwner]
+    },
+    getOwnerDashboard: {
+      method: 'get',
+      path: '/:ownerId/dashboard',
+      enabled: true,
+      prePipeline: [],
+      pipeline: [getOwnerDashboard]
+    }
+  }
+}
 
-router.post("/", validateCreateOwner, createOwnerController)
-router.get("/", getOwnersController)
-router.get("/:id", getOwnerByIdController)
-router.put("/:id", updateOwnerController)
-router.delete("/:id", deleteOwnerController)
-router.get('/:ownerId/dashboard', getOwnerDashboard)
+const OwnerRouter = configureRouter(express.Router(), config)
 
-export default router
+export default OwnerRouter

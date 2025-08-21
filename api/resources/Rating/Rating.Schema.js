@@ -9,4 +9,9 @@ const ratingSchema = new mongoose.Schema({
   createdAt: { type: Date, default: Date.now }
 })
 
-export const ratingModel = mongoose.model('Rating', ratingSchema)
+ratingSchema.set('toJSON', { virtuals: true })
+ratingSchema.set('toObject', { virtuals: true })
+
+const ratingModel = mongoose.model('Rating', ratingSchema)
+
+export { ratingSchema, ratingModel }

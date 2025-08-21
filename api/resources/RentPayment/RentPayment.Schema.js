@@ -28,4 +28,9 @@ const rentPaymentSchema = new mongoose.Schema({
   ]
 })
 
-export const rentPaymentModel = mongoose.model('RentPayment', rentPaymentSchema)
+rentPaymentSchema.set('toJSON', { virtuals: true })
+rentPaymentSchema.set('toObject', { virtuals: true })
+
+const rentPaymentModel = mongoose.model('RentPayment', rentPaymentSchema)
+
+export { rentPaymentSchema, rentPaymentModel }

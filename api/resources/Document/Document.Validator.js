@@ -1,9 +1,6 @@
-import dotenv from "dotenv"
-dotenv.config()
-
 const ENABLE_VALIDATION = process.env.ENABLE_VALIDATION === "true"
 
-export const validateCreateDocument = (req, res, next) => {
+const validateCreateDocument = (req, res, next) => {
   if (!ENABLE_VALIDATION) return next()
 
   const { documentData } = req.body
@@ -21,7 +18,7 @@ export const validateCreateDocument = (req, res, next) => {
   next()
 }
 
-export const validateUpdateDocumentById = (req, res, next) => {
+const validateUpdateDocumentById = (req, res, next) => {
   if (!ENABLE_VALIDATION) return next()
 
   const { documentId, documentData } = req.body
@@ -31,7 +28,7 @@ export const validateUpdateDocumentById = (req, res, next) => {
   next()
 }
 
-export const validateGetDocumentById = (req, res, next) => {
+const validateGetDocumentById = (req, res, next) => {
   if (!ENABLE_VALIDATION) return next()
 
   const { documentId } = req.body
@@ -40,7 +37,7 @@ export const validateGetDocumentById = (req, res, next) => {
   next()
 }
 
-export const validateGetAllDocumentsByUserId = (req, res, next) => {
+const validateGetAllDocumentsByUserId = (req, res, next) => {
   if (!ENABLE_VALIDATION) return next()
 
   const { userId } = req.body
@@ -49,7 +46,7 @@ export const validateGetAllDocumentsByUserId = (req, res, next) => {
   next()
 }
 
-export const validateUpdateDocumentsByUserId = (req, res, next) => {
+const validateUpdateDocumentsByUserId = (req, res, next) => {
   if (!ENABLE_VALIDATION) return next()
 
   const { userId, documentData } = req.body
@@ -59,7 +56,7 @@ export const validateUpdateDocumentsByUserId = (req, res, next) => {
   next()
 }
 
-export const validateDeleteDocument = (req, res, next) => {
+const validateDeleteDocument = (req, res, next) => {
   if (!ENABLE_VALIDATION) return next()
 
   const { documentId } = req.body
@@ -68,7 +65,7 @@ export const validateDeleteDocument = (req, res, next) => {
   next()
 }
 
-export const validateDeleteDocumentsByUserId = (req, res, next) => {
+const validateDeleteDocumentsByUserId = (req, res, next) => {
   if (!ENABLE_VALIDATION) return next()
 
   const { userId } = req.body
@@ -77,7 +74,7 @@ export const validateDeleteDocumentsByUserId = (req, res, next) => {
   next()
 }
 
-export const validateGetDocumentByType = (req, res, next) => {
+const validateGetDocumentByType = (req, res, next) => {
   if (!ENABLE_VALIDATION) return next()
 
   const {  documentType, uniqueNumber } = req.body
@@ -87,3 +84,16 @@ export const validateGetDocumentByType = (req, res, next) => {
 
   next()
 }
+
+const DocumentValidator = {
+  validateCreateDocument,
+  validateUpdateDocumentById,
+  validateGetDocumentById,
+  validateGetAllDocumentsByUserId,
+  validateUpdateDocumentsByUserId,
+  validateDeleteDocument,
+  validateDeleteDocumentsByUserId,
+  validateGetDocumentByType
+}
+
+export default DocumentValidator

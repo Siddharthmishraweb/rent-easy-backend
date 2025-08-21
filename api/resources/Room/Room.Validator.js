@@ -1,6 +1,6 @@
 const ENABLE_VALIDATION = process.env.ENABLE_VALIDATION === 'true'
 
-export const validateCreateRoom = (req, res, next) => {
+const validateCreateRoom = (req, res, next) => {
   if (!ENABLE_VALIDATION) return next()
   const data = req.body.roomData || {}
   if (!data.propertyId) return res.status(400).json({ message: 'propertyId is required' })
@@ -9,15 +9,23 @@ export const validateCreateRoom = (req, res, next) => {
   next()
 }
 
-export const validateUpdateRoom = (req, res, next) => {
+const validateUpdateRoom = (req, res, next) => {
   if (!ENABLE_VALIDATION) return next()
   if (!req.body.roomId) return res.status(400).json({ message: 'roomId is required' })
   if (!req.body.roomData) return res.status(400).json({ message: 'roomData is required' })
   next()
 }
 
-export const validateGetRoomById = (req, res, next) => {
+const validateGetRoomById = (req, res, next) => {
   if (!ENABLE_VALIDATION) return next()
   if (!req.body.roomId) return res.status(400).json({ message: 'roomId is required' })
   next()
 }
+
+const RoomValidator = {
+  validateCreateRoom,
+  validateUpdateRoom,
+  validateGetRoomById
+}
+
+export default RoomValidator

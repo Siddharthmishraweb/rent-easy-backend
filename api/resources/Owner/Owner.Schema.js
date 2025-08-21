@@ -16,6 +16,9 @@ const mongooseOptions = { timestamps: true }
 const ownerSchema = new mongoose.Schema(mongooseObject, mongooseOptions)
 ownerSchema.index({ "address.geoLocation": "2dsphere" })
 
+ownerSchema.set('toJSON', { virtuals: true })
+ownerSchema.set('toObject', { virtuals: true })
+
 const ownerModel = mongoose.model("Owner", ownerSchema)
 
 export { ownerSchema, ownerModel }

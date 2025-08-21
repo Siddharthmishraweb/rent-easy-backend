@@ -1,5 +1,5 @@
-import { documentModel } from "./Document.Schema.js"
-import { convertToObjectId } from "../../helper/index.js"
+import { documentModel } from './Document.Schema.js'
+import { convertToObjectId } from '../../helper/index.js'
 
 const createDocument = async (documentData) => {
   if(!documentData.uniqueNumber){
@@ -76,7 +76,7 @@ const deleteDocumentsByUserId = async (userId) => {
 const getDocumentByType = async ( docType, uniqueNumber) => {
 
 return await documentModel.findOne({
-  docType: { $regex: `^${docType}$`, $options: "i" },
+  docType: { $regex: `^${docType}$`, $options: 'i' },
   uniqueNumber: uniqueNumber
 }).lean()
 }

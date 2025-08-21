@@ -13,11 +13,15 @@ import {
   Queue,
   Handlebars,
   dayjs,
-  puppeteer
+  puppeteer,
+  crypto
 } from './lib.js'
+import configureRouter from './configureRouter.js'
 import asyncHandler from 'express-async-handler'
 import { exportToCSV } from './csv.js'
 import AppError from './AppError.js'
+import { logger } from './logger.js'
+import CustomError from './customError.js'
 
 import {
   redisClient,
@@ -141,5 +145,9 @@ export {
   puppeteer,
   computePenalty,
   exportToCSV,
-  AppError
+  AppError,
+  logger,
+  crypto,
+  configureRouter,
+  CustomError
 }

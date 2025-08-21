@@ -1,58 +1,70 @@
-import * as OwnerModel from "./Owner.Model.js"
+import OwnerModel from './Owner.Model.js'
+import { OWNER_MESSAGES as MSG } from './Owner.Constant.js'
 
-export const createOwnerController = async (req, res) => {
+const createOwner = async (req, res) => {
   try {
     const owner = await OwnerModel.createOwner(req.body)
-    res.status(201).json({ success: true, data: owner })
+    return res.success(201, MSG.CREATED, owner)
   } catch (err) {
     res.status(400).json({ success: false, error: err.message })
   }
 }
 
-export const getOwnersController = async (req, res) => {
+const getOwners = async (req, res) => {
   try {
     const owners = await OwnerModel.getOwners()
-    res.json({ success: true, data: owners })
+    return res.success(200, MSG.GET_OWNERS, owners)
   } catch (err) {
     res.status(500).json({ success: false, error: err.message })
   }
 }
 
-export const getOwnerByIdController = async (req, res) => {
+const getOwnerById = async (req, res) => {
   try {
     const owner = await OwnerModel.getOwnerById(req.params.id)
-    if (!owner) return res.status(404).json({ success: false, error: "Owner not found" })
-    res.json({ success: true, data: owner })
+    if (!owner) return res.status(404).json({ success: false, error: 'Owner not found' })
+
+    return res.success(200, MSG.GET_OWNER, owner)
   } catch (err) {
     res.status(500).json({ success: false, error: err.message })
   }
 }
 
-export const updateOwnerController = async (req, res) => {
+const updateOwner = async (req, res) => {
   try {
     const updatedOwner = await OwnerModel.updateOwner(req.params.id, req.body)
-    res.json({ success: true, data: updatedOwner })
+    return res.success(200, MSG.UPDATED, updatedOwner)
   } catch (err) {
     res.status(400).json({ success: false, error: err.message })
   }
 }
 
-export const deleteOwnerController = async (req, res) => {
+const deleteOwner = async (req, res) => {
   try {
     await OwnerModel.deleteOwner(req.params.id)
-    res.json({ success: true, message: "Owner deleted" })
+    return res.success(200, MSG.DELETED, {})
   } catch (err) {
     res.status(500).json({ success: false, error: err.message })
   }
 }
 
-
-export const getOwnerDashboard = async (req, res) => {
+const getOwnerDashboard = async (req, res) => {
   try {
     const dashboard = await OwnerModel.getOwnerDashboard(req.params.ownerId)
-    if (!dashboard) return res.status(404).json({ success: false, error: "Owner not found" })
-    res.json({ success: true, data: dashboard })
+    if (!dashboard) return res.status(404).json({ success: false, error: 'Owner not found' })
+    return res.success(200, MSG.OWNER_DASHBOARD, dashboard)
   } catch (err) {
     res.status(500).json({ success: false, error: err.message })
   }
 }
+
+const OwnerController = {
+  createOwner,
+  getOwners,
+  getOwnerById,
+  updateOwner,
+  deleteOwner,
+  getOwnerDashboard
+}
+
+export default OwnerController

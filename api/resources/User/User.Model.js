@@ -12,7 +12,6 @@ import {
 } from '../../helper/index.js'
 import AppError from '../../helper/AppError.js'
 import AddressModel from '../Address/Address.Model.js'
-// import { createAddress, updateAddressByAddressId, deleteAddress } from '../Address/Address.Model.js'
 import { USER_MESSAGES, MESSAGES } from './User.Constant.js'
 
 const {
@@ -133,7 +132,7 @@ const updatePasswordService = async ({ token, newPassword }) => {
   }
 }
 
-export {
+const UserModel = {
   registerUserService,
   loginUserService,
   googleLoginService,
@@ -141,3 +140,5 @@ export {
   verifyResetTokenService,
   updatePasswordService
 }
+
+export default UserModel

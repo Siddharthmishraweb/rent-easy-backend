@@ -234,7 +234,7 @@ const createAgreementPdfOnly = async (agreementId) => {
   return generateAgreementPdfBuffer(agreement, agreement.userId || {}, agreement.ownerId || {}, room || {}, property || {})
 }
 
-export const RentalAgreementModel = {
+const RentalAgreementModel = {
   createRentalAgreement,
   getRentalAgreements,
   getRentalAgreementById,
@@ -243,3 +243,5 @@ export const RentalAgreementModel = {
   deleteRentalAgreementById,
   createAgreementPdfOnly
 }
+
+export default RentalAgreementModel
