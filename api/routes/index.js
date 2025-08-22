@@ -8,6 +8,7 @@ import ownerRouter from '../resources/Owner/Owner.Router.js'
 import rentalAgreementRoutes from '../resources/RentalAgreement/RentalAgreement.Router.js'
 import rentPaymentRoutes from '../resources/RentPayment/RentPayment.Router.js'
 import { updatingPropertyStats } from '../middleware/updatingPropertyStats.js'
+import maintainanceRequestRoutes from '../resources/Request/Request.Router.js'
 
 const router = express.Router()
 
@@ -19,5 +20,6 @@ router.use('/room', updatingPropertyStats, roomRoutes)
 router.use('/owner', ownerRouter)
 router.use('/rental-agreement', rentalAgreementRoutes)
 router.use('/rent-payment', rentPaymentRoutes)
+router.use('/requests', maintainanceRequestRoutes)
 
 export default router
