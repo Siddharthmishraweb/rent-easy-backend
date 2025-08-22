@@ -9,8 +9,8 @@
 //   return key
 // }
 
-import AWS from 'aws-sdk';
-import { v4 as uuidv4 } from 'uuid';
+import AWS from 'aws-sdk'
+import { v4 as uuidv4 } from 'uuid'
 
 AWS.config.update({
   accessKeyId: process.env.AWS_ACCESS_KEY_ID,
