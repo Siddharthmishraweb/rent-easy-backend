@@ -29,17 +29,17 @@ const getOwnerDashboard = async (ownerId) => {
     // 1️⃣ Get Owner Details
     const owner = await ownerModel.findById(ownerId)
       .populate('userId', 'name email phone') // from User schema
-      .lean();
+      .lean()
 
     if (!owner) {
-      return res.status(404).json({ error: 'Owner not found' });
+      return res.status(404).json({ error: 'Owner not found' })
     }
 
     console.log('Owner:: ', owner)
 
     const documents = await documentModel.find({ userId: owner.userId._id })
       .select('-__v')  // exclude __v if you want
-      .lean();
+      .lean()
 
     // 2️⃣ Get All Properties with Rooms
     const properties = await propertyModel.find({ ownerId: owner._id })
@@ -51,25 +51,25 @@ const getOwnerDashboard = async (ownerId) => {
           select: 'name'                    // only fetch name field
         }
       })
-      .lean({ virtuals: true });
+      .lean({ virtuals: true })
 
     // Flatten all rooms for easy stats
-    const allRooms = properties.flatMap(p => p.rooms || []);
+    const allRooms = properties.flatMap(p => p.rooms || [])
 
     // 3️⃣ Occupancy Stats
-    const totalRooms = allRooms.length;
+    const totalRooms = allRooms.length
     const occupiedRooms = allRooms.filter(r =>
       r.rentalHistory?.some(h => !h.endDate) // ongoing rental
-    ).length;
+    ).length
 
     const occupancyRate = totalRooms > 0
       ? ((occupiedRooms / totalRooms) * 100).toFixed(2)
-      : 0;
+      : 0
 
     // 4️⃣ Rent Collection Stats (This Month & Year)
-    const now = new Date();
-    const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
-    const startOfYear = new Date(now.getFullYear(), 0, 1);
+    const now = new Date()
+    const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1)
+    const startOfYear = new Date(now.getFullYear(), 0, 1)
 
     const [monthlyRent, yearlyRent] = await Promise.all([
       rentModel.aggregate([
@@ -92,7 +92,7 @@ const getOwnerDashboard = async (ownerId) => {
         },
         { $group: { _id: null, total: { $sum: '$totalAmountCollected' } } }
       ])
-    ]);
+    ])
 
     // 5️⃣ Pending Rent Payments
     const pendingRents = await rentModel.find({
@@ -101,13 +101,13 @@ const getOwnerDashboard = async (ownerId) => {
     })
       .populate('userId', 'name email')
       .populate('agreementId', 'startDate endDate')
-      .lean();
+      .lean()
 
     // 6️⃣ Average Ratings
-    const propertyRatings = properties.map(p => p.rating || 0);
+    const propertyRatings = properties.map(p => p.rating || 0)
     const avgRating = propertyRatings.length > 0
       ? (propertyRatings.reduce((a, b) => a + b, 0) / propertyRatings.length).toFixed(2)
-      : 0;
+      : 0
 
     // 7️⃣ Build Dashboard Response
     const dashboard = {
@@ -129,7 +129,7 @@ const getOwnerDashboard = async (ownerId) => {
       },
       pendingPayments: pendingRents,
       properties
-    };
+    }
 
     return dashboard
 

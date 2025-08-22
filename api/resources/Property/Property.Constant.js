@@ -43,4 +43,4 @@ export const PROPERTY_SIMILAR_WEIGHTS = {
   features: 0.15,    // Jaccard overlap
   distance: 0.05,    // geo/city/locality proximity
   rating: 0.05       // rating closeness
-};
+}

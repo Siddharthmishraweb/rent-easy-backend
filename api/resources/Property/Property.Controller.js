@@ -17,7 +17,7 @@ const getProperties = async (req, res) => {
     const props = await PropertyModel.getProperties(req)
     return res.success(200, MSG.ALL, props)
   } catch (err) {
-    logger.error(err, err.errorResponse.errmsg || "No proper error found");
+    logger.error(err, err.errorResponse.errmsg || "No proper error found")
     res.status(500).json({ error: err.message })
   }
 }
@@ -264,7 +264,7 @@ const searchProperty = async (req, res) => {
 
 const autoCompleteSearch = async (req, res) => {
   try {
-    const query = { q: req.query.q, limit: req.query.limit ? Number(req.query.limit) : undefined };
+    const query = { q: req.query.q, limit: req.query.limit ? Number(req.query.limit) : undefined }
     const { q, limit } = query
 
     const properties = await PropertyModel.autoCompleteSearch(q, limit)

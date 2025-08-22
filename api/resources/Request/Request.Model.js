@@ -5,7 +5,6 @@ import ExcelJS from 'exceljs'
 import path from 'path'
 import fs from 'fs'
 import { roomModel } from '../Room/Room.Schema.js'
-import { propertyModel } from '../Property/Property.Schema.js'
 
 const { NOT_FOUND, NOT_AUTHORIZED, INVALID_STATUS } = MESSAGES
 

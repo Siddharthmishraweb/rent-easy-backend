@@ -54,7 +54,7 @@ propertySchema.virtual('rooms', {
   foreignField: 'propertyId',
 })
 
-// Helper: markDeleted hook for safety (not enforced; used by model)
+// Helper: markDeleted hook for safety (not enforced used by model)
 propertySchema.methods.softDelete = function () {
   this.deletedAt = new Date()
   this.isActive = false

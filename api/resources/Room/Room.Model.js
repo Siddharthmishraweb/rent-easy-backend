@@ -6,8 +6,8 @@ import RentalAgreementModel from '../RentalAgreement/RentalAgreement.Model.js'
 import { rentalAgreementModel } from '../RentalAgreement/RentalAgreement.Schema.js'
 
 const createRoom = async (roomData) => {
-  const created = await roomModel.create(roomData);
-  return created;
+  const created = await roomModel.create(roomData)
+  return created
 }
 
 const getRooms = async (filter = {}, options = {}) => {
@@ -62,9 +62,9 @@ export async function assignTenant(roomData) {
 
   const agreementResponse = await RentalAgreementModel.createRentalAgreement(agreementData)
 
-  const hasActiveHistory = room.rentalHistory.some(h => h.endDate === null);
+  const hasActiveHistory = room.rentalHistory.some(h => h.endDate === null)
   if (hasActiveHistory) {
-    throw new Error("This room has an active rental record. Vacate first.");
+    throw new Error("This room has an active rental record. Vacate first.")
   }
 
   const objectTenantId = convertToObjectId(tenantId)

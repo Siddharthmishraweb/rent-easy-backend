@@ -13,7 +13,7 @@ import CustomError from './api/helper/customError.js'
 dotenv.config()
 const app = express()
 
-app.use(loggerMiddleware);
+app.use(loggerMiddleware)
 
 // ---------- MIDDLEWARE ----------
 app.use(express.json())

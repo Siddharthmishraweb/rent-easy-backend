@@ -104,9 +104,9 @@ const createRentalAgreement = async (agreementData, opts = { sendPdf: true, send
     if(isAlreadyExist.length > 0)  throw new AppError('Agreement of this room already exist! ')
 
     // 2️⃣ Find active rental (where endDate is null)
-    // const activeRental = room.rentalHistory.find(r => r.endDate === null);
+    // const activeRental = room.rentalHistory.find(r => r.endDate === null)
     // if (!activeRental) {
-    //   return res.status(400).json({ error: "No active tenant found for this room" });
+    //   return res.status(400).json({ error: "No active tenant found for this room" })
     // }
 
   const property = await propertyModel.findById(room.propertyId)
@@ -156,7 +156,7 @@ const createRentalAgreement = async (agreementData, opts = { sendPdf: true, send
         //   property = await propertyModel.findById(room.propertyId).lean().catch(()=>({}))
         // }
       } catch (e) {
-        // ignore missing models; PDF will still be created with limited data
+        // ignore missing models PDF will still be created with limited data
       }
 
       const { buffer, filename } = await generateAgreementPdfBuffer(agg, agg.userId || {}, agg.ownerId || {}, room || {}, property || {})
