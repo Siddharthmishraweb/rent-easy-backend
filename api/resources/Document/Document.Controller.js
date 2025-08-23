@@ -29,6 +29,7 @@ const getDocuments = async (req, res, next) => {
     const documents = await DocumentModel.getDocuments(filter)
     return res.success(200, MSG.ALL_DOCUMENTS, documents)
   } catch (err) {
+    return res.error(500, "Error in fetching Documents", err)
     next(err)
   }
 }

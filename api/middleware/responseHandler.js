@@ -8,13 +8,22 @@ export const responseHandler = (req, res, next) => {
     })
   }
 
-  res.error = (statusCode = 500, message = 'Error', errorMessage = '', error = {}) => {
+  res.error = (statusCode = 500, errorMessage = '', error = '') => {
+    let errorDetails = error
+    if (error instanceof Error) {
+      errorDetails = {
+        name: error.name,
+        message: error.message,
+        stack: error.stack
+      }
+    }
+
     return res.status(statusCode).json({
       statusCode,
-      message,
+      message: errorMessage,
       error: {
         errorMessage,
-        error,
+        error: errorDetails,
       },
     })
   }
