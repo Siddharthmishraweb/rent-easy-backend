@@ -5,7 +5,7 @@
   "main": "app.js",
   "type": "module",
   "scripts": {
-    "start": "node app.js",
+    "start": "sudo service redis-server start && node app.js",
     "dev": "nodemon app.js",
     "test": "npm run test"
   },
