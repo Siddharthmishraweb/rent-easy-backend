@@ -8,7 +8,12 @@ const mongooseObject = {
   email: { type: String, unique: true },
   phone: { type: String, unique: true },
   passwordHash: String,
-  role: { type: String, enum: ['user', 'owner', 'admin', 'tenant'], default: 'user' },
+  // role: { type: String, enum: ['user', 'owner', 'admin', 'tenant'], default: 'user' },
+    role: {
+    type: String,
+    enum: ['ADMIN', 'OWNER', 'TENANT', 'GUEST'],
+    default: 'GUEST'
+  },
   aadhaarNumber: String,
   kycVerified: { type: Boolean, default: false },
   address: addressSchema,

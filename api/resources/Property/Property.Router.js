@@ -1,6 +1,7 @@
 import { express, configureRouter } from '../../helper/index.js'
 import PropertyController from './Property.Controller.js'
 import PropertyValidator from './Property.Validator.js'
+import { roleAuth } from '../../middleware/rolebasedMiddleware.js'
 
 const {
   createProperty,
@@ -34,7 +35,7 @@ const config = {
       method: 'post',
       path: '/',
       enabled: true,
-      prePipeline: [PropertyValidator.validateCreateProperty],
+      prePipeline: [roleAuth(['ADMIN', 'OWNER']), PropertyValidator.validateCreateProperty],
       pipeline: [createProperty]
     },
     getProperties: {
