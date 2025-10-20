@@ -1,6 +1,7 @@
 import { express, configureRouter } from '../../helper/index.js'
 import RentPaymentController from './RentPayment.Controller.js'
 import RentPaymentValidator from './RentPayment.Validator.js'
+import { auth } from '../../middleware/rolebasedMiddleware.js'
 
 const {
   createPayment,
@@ -19,42 +20,42 @@ const config = {
       method: 'post',
       path: '/',
       enabled: true,
-      prePipeline: [RentPaymentValidator.validateCreatePayment],
+      prePipeline: [auth.tenantOnly, RentPaymentValidator.validateCreatePayment],
       pipeline: [createPayment]
     },
     getPaymentsByUser: {
       method: 'get',
       path: '/user/:userId',
       enabled: true,
-      prePipeline: [],
+      prePipeline: [auth.all],
       pipeline: [getPaymentsByUser]
     },
     getPaymentById: {
       method: 'get',
       path: '/:id',
       enabled: true,
-      prePipeline: [],
+      prePipeline: [auth.all],
       pipeline: [getPaymentById]
     },
     updatePayment: {
       method: 'put',
       path: '/:id',
       enabled: true,
-      prePipeline: [],
+      prePipeline: [auth.adminOnly],
       pipeline: [updatePayment]
     },
     deletePayment: {
       method: 'delete',
       path: '/:id',
       enabled: true,
-      prePipeline: [],
+      prePipeline: [auth.adminOnly],
       pipeline: [deletePayment]
     },
     getPaymentBreakup: {
-      method: 'post',
-      path: '/payment-breakup',
+      method: 'get',
+      path: '/breakup',
       enabled: true,
-      prePipeline: [],
+      prePipeline: [auth.tenantAndAdmin],
       pipeline: [getPaymentBreakup]
     }
   }

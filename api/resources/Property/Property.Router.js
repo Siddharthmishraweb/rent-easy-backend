@@ -1,7 +1,7 @@
 import { express, configureRouter } from '../../helper/index.js'
 import PropertyController from './Property.Controller.js'
 import PropertyValidator from './Property.Validator.js'
-import { roleAuth } from '../../middleware/rolebasedMiddleware.js'
+import { auth } from '../../middleware/rolebasedMiddleware.js'
 
 const {
   createProperty,
@@ -35,154 +35,154 @@ const config = {
       method: 'post',
       path: '/',
       enabled: true,
-      prePipeline: [roleAuth(['ADMIN', 'OWNER']), PropertyValidator.validateCreateProperty],
+      prePipeline: [auth.ownerAndAdmin, PropertyValidator.validateCreateProperty],
       pipeline: [createProperty]
     },
     getProperties: {
-      method: 'post',
+      method: 'get',
       path: '/list',
       enabled: true,
-      prePipeline: [PropertyValidator.validateList],
+      prePipeline: [auth.all, PropertyValidator.validateList],
       pipeline: [getProperties]
     },
     getPropertyById: {
-      method: 'post',
-      path: '/getById',
+      method: 'get',
+      path: '/:id',
       enabled: true,
-      prePipeline: [PropertyValidator.validateGetPropertyById],
+      prePipeline: [auth.all, PropertyValidator.validateGetPropertyById],
       pipeline: [getPropertyById]
     },
     getPropertyByCode: {
       method: 'get',
       path: '/byCode/:code',
       enabled: true,
-      prePipeline: [PropertyValidator.validateCode],
+      prePipeline: [auth.all, PropertyValidator.validateCode],
       pipeline: [getPropertyByCode]
     },
     validateCodePost: {
       method: 'post',
       path: '/validate-code',
       enabled: true,
-      prePipeline: [PropertyValidator.validateCode],
+      prePipeline: [auth.ownerAndAdmin, PropertyValidator.validateCode],
       pipeline: [validateCode]
     },
     validateCodeGet: {
       method: 'get',
       path: '/validate-code/:code',
       enabled: true,
-      prePipeline: [PropertyValidator.validateCode],
+      prePipeline: [auth.ownerAndAdmin, PropertyValidator.validateCode],
       pipeline: [validateCode]
     },
     updatePropertyById: {
       method: 'put',
-      path: '/updateById',
+      path: '/:id',
       enabled: true,
-      prePipeline: [PropertyValidator.validateUpdateProperty],
+      prePipeline: [auth.ownerAndAdmin, PropertyValidator.validateUpdateProperty],
       pipeline: [updatePropertyById]
     },
     softDeletePropertyById: {
       method: 'delete',
-      path: '/softDeleteById',
+      path: '/:id/soft',
       enabled: true,
-      prePipeline: [PropertyValidator.validateGetPropertyById],
+      prePipeline: [auth.ownerAndAdmin, PropertyValidator.validateGetPropertyById],
       pipeline: [softDeletePropertyById]
     },
     restorePropertyById: {
-      method: 'put',
-      path: '/restoreById',
+      method: 'post',
+      path: '/:id/restore',
       enabled: true,
-      prePipeline: [PropertyValidator.validateGetPropertyById],
+      prePipeline: [auth.ownerAndAdmin, PropertyValidator.validateGetPropertyById],
       pipeline: [restorePropertyById]
     },
     archiveProperty: {
-      method: 'put',
-      path: '/archive',
+      method: 'post',
+      path: '/:id/archive',
       enabled: true,
-      prePipeline: [],
+      prePipeline: [auth.ownerAndAdmin, PropertyValidator.validateGetPropertyById],
       pipeline: [archiveProperty]
     },
     deletePropertyById: {
       method: 'delete',
-      path: '/deleteById',
+      path: '/:id',
       enabled: true,
-      prePipeline: [PropertyValidator.validateGetPropertyById],
+      prePipeline: [auth.adminOnly, PropertyValidator.validateGetPropertyById],
       pipeline: [deletePropertyById]
     },
     getAllPropertiesOfOwner: {
-      method: 'post',
-      path: '/getOwnersProperty',
+      method: 'get',
+      path: '/owner/:ownerId',
       enabled: true,
-      prePipeline: [],
+      prePipeline: [auth.ownerAndAdmin],
       pipeline: [getAllPropertiesOfOwner]
     },
     recomputeRating: {
       method: 'post',
-      path: '/recomputeRating',
+      path: '/:id/recompute-rating',
       enabled: true,
-      prePipeline: [],
+      prePipeline: [auth.ownerAndAdmin, PropertyValidator.validateGetPropertyById],
       pipeline: [recomputeRating]
     },
     nearby: {
-      method: 'post',
+      method: 'get',
       path: '/nearby',
       enabled: true,
-      prePipeline: [PropertyValidator.validateGeoNearby],
+      prePipeline: [auth.all, PropertyValidator.validateGeoNearby],
       pipeline: [nearby]
     },
     addImage: {
       method: 'post',
-      path: '/image/add',
+      path: '/:id/images',
       enabled: true,
-      prePipeline: [],
+      prePipeline: [auth.ownerAndAdmin, PropertyValidator.validateGetPropertyById],
       pipeline: [addImage]
     },
     removeImage: {
-      method: 'post',
-      path: '/image/remove',
+      method: 'delete',
+      path: '/:id/images',
       enabled: true,
-      prePipeline: [],
+      prePipeline: [auth.ownerAndAdmin, PropertyValidator.validateGetPropertyById],
       pipeline: [removeImage]
     },
     bulkUpdate: {
-      method: 'post',
-      path: '/bulkUpdate',
+      method: 'put',
+      path: '/bulk',
       enabled: true,
-      prePipeline: [],
+      prePipeline: [auth.adminOnly],
       pipeline: [bulkUpdate]
     },
     getStats: {
-      method: 'post',
+      method: 'get',
       path: '/stats',
       enabled: true,
-      prePipeline: [],
+      prePipeline: [auth.adminOnly],
       pipeline: [getStats]
     },
     getSimilarById: {
-      method: 'post',
-      path: '/similar/byId',
+      method: 'get',
+      path: '/:id/similar',
       enabled: true,
-      prePipeline: [],
+      prePipeline: [auth.all],
       pipeline: [getSimilarById]
     },
     getSimilarByCode: {
       method: 'get',
-      path: '/similar/byCode/:code',
+      path: '/byCode/:code/similar',
       enabled: true,
-      prePipeline: [],
+      prePipeline: [auth.all],
       pipeline: [getSimilarByCode]
     },
     searchProperty: {
-      method: 'post',
+      method: 'get',
       path: '/search',
       enabled: true,
-      prePipeline: [],
+      prePipeline: [auth.all],
       pipeline: [searchProperty]
     },
     autoCompleteSearch: {
-      method: 'post',
+      method: 'get',
       path: '/autocomplete',
       enabled: true,
-      prePipeline: [],
+      prePipeline: [auth.all],
       pipeline: [autoCompleteSearch]
     }
   }

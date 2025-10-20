@@ -3,22 +3,47 @@ import mongoose from 'mongoose'
 import cors from 'cors'
 import morgan from 'morgan'
 import dotenv from 'dotenv'
+import swaggerUi from 'swagger-ui-express'
+import rateLimit from 'express-rate-limit'
+import helmet from 'helmet'
 import { responseHandler } from './api/middleware/index.js'
 import errorHandler from './api/middleware/errorHandler.js'
 import routes from './api/routes/index.js'
 import "./api/cron/rent-reminder/rentReminder.js"
 import { loggerMiddleware } from './api/helper/logger.js'
 import CustomError from './api/helper/customError.js'
+import { swaggerDocs } from './swagger.js'
 
 dotenv.config()
 const app = express()
 
 app.use(loggerMiddleware)
 
-// ---------- MIDDLEWARE ----------
-app.use(express.json())
-app.use(cors())
+// ---------- SECURITY MIDDLEWARE ----------
+app.use(helmet()) // Security headers
+app.use(cors({
+  origin: process.env.FRONTEND_URL || 'http://localhost:3000',
+  credentials: true
+}))
+
+// Rate limiting
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100, // limit each IP to 100 requests per windowMs
+  message: 'Too many requests from this IP, please try again later.'
+});
+app.use('/api', limiter);
+
+// ---------- GENERAL MIDDLEWARE ----------
+app.use(express.json({ limit: '10mb' }))
+app.use(express.urlencoded({ extended: true, limit: '10mb' }))
 app.use(morgan('dev'))
+
+// ---------- SWAGGER DOCS ----------
+app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs, {
+  explorer: true,
+  customCssUrl: 'https://cdn.jsdelivr.net/npm/swagger-ui-themes@3.0.0/themes/3.x/theme-material.css'
+}))
 
 
 
@@ -30,10 +55,49 @@ app.use('/api', routes)
 app.use(errorHandler)
 
 
-// ---------- 404 HANDLER ----------
+// ---------- ERROR HANDLERS ----------
+
+// Catch 404 and forward to error handler
 app.use((req, res, next) => {
-  res.status(404).json({ success: false, message: 'API endpoint not found' })
-})
+  const error = new CustomError('API endpoint not found', 404);
+  next(error);
+});
+
+// Global error handler
+app.use((err, req, res, next) => {
+  // Log error
+  console.error(err);
+
+  // Set locals, only providing error in development
+  const errorResponse = {
+    message: err.message || 'Internal Server Error',
+    status: err.status || 500,
+    ...(process.env.NODE_ENV === 'development' && { stack: err.stack })
+  };
+
+  // Mongoose validation error
+  if (err.name === 'ValidationError') {
+    errorResponse.status = 400;
+    errorResponse.message = Object.values(err.errors).map(val => val.message);
+  }
+
+  // Mongoose duplicate key error
+  if (err.code === 11000) {
+    errorResponse.status = 400;
+    errorResponse.message = 'Duplicate key error';
+  }
+
+  // JWT error
+  if (err.name === 'JsonWebTokenError') {
+    errorResponse.status = 401;
+    errorResponse.message = 'Invalid token';
+  }
+
+  res.status(errorResponse.status).json({
+    success: false,
+    error: errorResponse
+  });
+});
 
 app.use('/', (req, res, next) => {
   res.status(200).send(`

@@ -7,7 +7,9 @@
   "scripts": {
     "start": "node app.js",
     "dev": "nodemon app.js",
-    "test": "npm run test"
+    "test": "npm run test",
+    "seed": "node scripts/seeders/seeder.js",
+    "seed:fresh": "npm run seed -- --fresh"
   },
   "repository": {
     "type": "git",
@@ -48,14 +50,17 @@
     "bull": "^4.16.5",
     "cors": "^2.8.5",
     "csv-writer": "^1.6.0",
+    "date-fns": "^4.1.0",
     "dayjs": "^1.11.13",
     "dotenv": "^17.2.1",
     "exceljs": "^4.4.0",
     "express": "^5.1.0",
     "express-async-handler": "^1.2.0",
+    "express-rate-limit": "^8.1.0",
     "fs-extra": "^11.3.1",
     "google-auth-library": "^10.2.1",
     "handlebars": "^4.7.8",
+    "helmet": "^8.1.0",
     "jsonwebtoken": "^9.0.2",
     "moment": "^2.30.1",
     "mongoose": "^8.17.0",
@@ -68,7 +73,9 @@
     "pino": "^9.9.0",
     "puppeteer": "^24.16.0",
     "redis": "^5.8.0",
-    "stream-buffers": "^3.0.3"
+    "stream-buffers": "^3.0.3",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^5.0.1"
   },
   "devDependencies": {
     "pino-pretty": "^13.1.1"
