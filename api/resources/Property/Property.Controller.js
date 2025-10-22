@@ -24,8 +24,8 @@ const getProperties = async (req, res) => {
 
 const getPropertyById = async (req, res) => {
   try {
-    const { propertyId, withRooms = false } = req.body
-    const property = await PropertyModel.getPropertyById(propertyId, { withRooms })
+    const { propertyId, withRooms = false, withAddress = false, withOwner = false } = req.body
+    const property = await PropertyModel.getPropertyById(propertyId, { withRooms, withAddress, withOwner })
     if (!property) return res.status(404).json({ message: MSG.NOT_FOUND })
     return res.success(200, MSG.GET_PROPERTY_BY_ID_SUCCESSFULLY, property)
   } catch (err) {

@@ -371,7 +371,7 @@ const getProperties = async (req, res) => {
   }
 }
 
-const getPropertyById = async (id, { withRooms = false } = {}) => {
+const getPropertyById = async (id, { withRooms = false, withAddress = false, withOwner = false } = {}) => {
   const q = propertyModel.findById(convertToObjectId(id))
   if (withRooms) {
     q.populate({
@@ -380,6 +380,28 @@ const getPropertyById = async (id, { withRooms = false } = {}) => {
       options: { sort: { createdAt: -1 } },
     })
   }
+
+  if (withAddress) {
+    q.populate({
+      path: 'addressId',
+      model: 'Address',
+      select: '-__v -createdAt -updatedAt -_id', // optional: clean response
+    })
+  }
+
+  if (withOwner) {
+    q.populate({
+      path: 'ownerId',
+      model: 'Owner',
+      populate: {
+        path: 'userId',
+        model: 'User',
+        select: '-passwordHash -__v -createdAt -updatedAt',
+      },
+      select: '-__v -createdAt -updatedAt',
+    })
+  }
+
   return await q.lean({ virtuals: true })
 }
 
